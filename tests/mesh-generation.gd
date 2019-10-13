@@ -57,7 +57,7 @@ func _generate_mesh():
 	meshInstance.mesh = mesh;
 	meshInstance.create_trimesh_collision();
 	
-	meshInstance.material_override = load("res://tests/new_shadermaterial.tres");
+	meshInstance.material_override = load("res://tests/new_Spatialmaterial.tres");
 	
 	print(ResourceSaver.save("res://tests/testMesh.tres", mesh, 32));
 
@@ -94,7 +94,7 @@ func _is_wall(x, y, maxDepth = 1) -> bool:
 #
 func _get_color(corner: int, xOffset = 0, yOffset = 0) -> Color:
 	if _is_visible(xOffset, yOffset, false):
-		return Color(1, 0, 0);
+		return Color(1, 1, 1);
 	match(corner):
 		0: 
 			if not _is_visible(xOffset - 1, yOffset + 1, false) && not _is_visible(xOffset, yOffset + 1, false) && not _is_visible(xOffset - 1, yOffset, false):
@@ -108,7 +108,7 @@ func _get_color(corner: int, xOffset = 0, yOffset = 0) -> Color:
 		3:
 			if not _is_visible(xOffset + 1, yOffset - 1, false) && not _is_visible(xOffset, yOffset - 1, false) && not _is_visible(xOffset + 1, yOffset, false):
 				return Color(0, 0, 0);
-	return Color(1, 0, 0);
+	return Color(1, 1, 1);
 
 func _plane(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	if not _is_visible(xOffset, yOffset, false) && (_is_visible(xOffset + 1, yOffset + 1, false) || _is_visible(xOffset - 1, yOffset - 1, false)):
