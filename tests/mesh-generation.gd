@@ -37,7 +37,7 @@ func _generate_mesh():
 	
 	for y in range(terrain.size()):
 		for x in range(terrain[y].size()):
-			print(x, " / ", y, " -> ",terrain[y][x]);
+			#print(x, " / ", y, " -> ",terrain[y][x]);
 			if terrain[y][x][1] == 0:
 				_plane(st, x, y);
 			elif terrain[y][x][1] >= 1:
@@ -71,6 +71,20 @@ func _is_visible(x, y, checkPassage = true) -> bool:
 	elif checkPassage && (terrain[y][x][0] == 1 || terrain[y][x][1] >= 1):
 		return true;
 	return false;
+
+func _is_wall(x, y, maxDepth = 1) -> bool:
+	if y > terrain.size() - 1:
+		return true;
+	elif x > terrain[y].size() - 1:
+		return true;
+	elif y <= 0 || x <= 0:
+		return true;
+	elif terrain[y][x][1] <= maxDepth && terrain[y][x][1] > 0:
+		print(terrain[y][x][1], " - ", maxDepth)
+		return true;
+	elif terrain[y][x][1] != 0:
+		return false;
+	return true;
 
 #
 # 0   1
@@ -146,14 +160,13 @@ func _plane(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 		st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
 
 func _passage(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
-	st.add_color(Color(1, 0, 0));
-	if not _is_visible(xOffset, yOffset - 1):
+	if _is_wall(xOffset, yOffset - 1, -z/2):
 		_passage_bottom(st, xOffset, yOffset, z);
-	if not _is_visible(xOffset + 1, yOffset):
+	if _is_wall(xOffset + 1, yOffset, -z/2):
 		_passage_right(st, xOffset, yOffset, z);
-	if not _is_visible(xOffset - 1, yOffset):
+	if _is_wall(xOffset - 1, yOffset, -z/2):
 		_passage_left(st, xOffset, yOffset, z);
-	if not _is_visible(xOffset, yOffset + 1):
+	if _is_wall(xOffset, yOffset + 1, -z/2):
 		_passage_ceiling(st, xOffset, yOffset, z);
 
 func _passage_bottom(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
