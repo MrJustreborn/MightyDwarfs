@@ -5,6 +5,7 @@
 
 [sub_resource type="Environment" id=1]
 background_mode = 1
+background_color = Color( 0.105882, 0.105882, 0.105882, 1 )
 ambient_light_color = Color( 1, 1, 1, 1 )
 
 [node name="Spatial" type="Spatial"]
@@ -16,7 +17,7 @@ mesh = ExtResource( 2 )
 material/0 = null
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.988503, 0.151203, 0, -0.151203, 0.988503, 17.4702, 17.3348, 19.8844 )
+transform = Transform( 1, 0, 0, 0, 0.988503, 0.151203, 0, -0.151203, 0.988503, 25.6613, 26.1868, 34.1888 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )

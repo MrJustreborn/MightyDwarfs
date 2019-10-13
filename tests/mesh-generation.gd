@@ -16,9 +16,14 @@ var terrain = [
 	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
 	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [1, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
 	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0, 0]],
+	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0, 0]],
+	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0, 0]],
 	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
-	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
-	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+	[[0, 0], [1, 2], [1, 2], [1, 2], [1, 2], [1, 1], [1, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+	[[0, 0], [1, 2], [1, 2], [1, 1], [1, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+	[[0, 0], [1, 2], [1, 2], [1, 1], [1, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
+	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
 	[[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]],
 ]
 
@@ -36,8 +41,9 @@ func _generate_mesh():
 			if terrain[y][x][1] == 0:
 				_plane(st, x, y);
 			elif terrain[y][x][1] >= 1:
-				_plane(st, x, y, -2);
-				_passage(st, x, y);
+				_plane(st, x, y, -2 * terrain[y][x][1]);
+				for i in range(terrain[y][x][1]):
+					_passage(st, x, y, -2 * i);
 	
 	st.index();
 	st.generate_normals();
@@ -139,110 +145,110 @@ func _plane(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 		st.add_uv(Vector2(0, 0))
 		st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
 
-func _passage(st: SurfaceTool, xOffset = 0, yOffset = 0):
+func _passage(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_color(Color(1, 0, 0));
 	if not _is_visible(xOffset, yOffset - 1):
-		_passage_bottom(st, xOffset, yOffset);
+		_passage_bottom(st, xOffset, yOffset, z);
 	if not _is_visible(xOffset + 1, yOffset):
-		_passage_right(st, xOffset, yOffset);
+		_passage_right(st, xOffset, yOffset, z);
 	if not _is_visible(xOffset - 1, yOffset):
-		_passage_left(st, xOffset, yOffset);
+		_passage_left(st, xOffset, yOffset, z);
 	if not _is_visible(xOffset, yOffset + 1):
-		_passage_ceiling(st, xOffset, yOffset);
+		_passage_ceiling(st, xOffset, yOffset, z);
 
-func _passage_bottom(st: SurfaceTool, xOffset = 0, yOffset = 0):
+func _passage_bottom(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_color(_get_color(2, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(2, xOffset, yOffset));
 	st.add_uv(Vector2(0, 0))
-	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, -2))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(3, xOffset, yOffset));
 	st.add_uv(Vector2(1, 0))
-	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(3, xOffset, yOffset));
 	st.add_uv(Vector2(1, 0))
-	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(3, xOffset, yOffset));
 	st.add_uv(Vector2(1, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(3, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 
-func _passage_right(st: SurfaceTool, xOffset = 0, yOffset = 0):
+func _passage_right(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_color(_get_color(3, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(3, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(1, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(1, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(1, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(3, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0 + z))
 
-func _passage_left(st: SurfaceTool, xOffset = 0, yOffset = 0):
+func _passage_left(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_color(_get_color(2, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(0, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(2, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, -2))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(2, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(0, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(0, xOffset, yOffset));
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 
-func _passage_ceiling(st: SurfaceTool, xOffset = 0, yOffset = 0):
+func _passage_ceiling(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
 	st.add_uv(Vector2(0, 1))
-	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
 
 
 
