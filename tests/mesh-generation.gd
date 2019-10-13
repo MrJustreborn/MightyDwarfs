@@ -3,13 +3,15 @@ extends Spatial
 onready var meshInstance = $MeshInstance;
 
 var terrain = [
-	[0, 0, 0, 0, 0, 0, 0, 0],
-	[0, 1, 1, 0, 0, 0, 1, 0],
-	[0, 0, 0, 0, 0, 0, 1, 0],
-	[0, 0, 1, 0, 0, 0, 1, 0],
-	[0, 0, 0, 0, 0, 0, 1, 0],
-	[0, 1, 1, 0, 0, 0, 1, 0],
-	[0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+	[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+	[0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+	[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+	[0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]
 
 func _ready():
@@ -27,6 +29,7 @@ func _generate_mesh():
 				_plane(st, x, y);
 			elif terrain[y][x] == 1:
 				_plane(st, x, y, -2);
+				_passage(st, x, y);
 	
 	st.index();
 	st.generate_normals();
@@ -125,4 +128,103 @@ func _plane(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 		st.add_color(_get_color(2, xOffset, yOffset));
 		st.add_uv(Vector2(0, 0))
 		st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
-	pass
+
+func _passage(st: SurfaceTool, xOffset = 0, yOffset = 0):
+	st.add_color(Color(1, 0, 0));
+	if not _is_visible(xOffset, yOffset - 1):
+		_passage_bottom(st, xOffset, yOffset);
+	if not _is_visible(xOffset + 1, yOffset):
+		_passage_right(st, xOffset, yOffset);
+	if not _is_visible(xOffset - 1, yOffset):
+		_passage_left(st, xOffset, yOffset);
+	if not _is_visible(xOffset, yOffset + 1):
+		_passage_ceiling(st, xOffset, yOffset);
+
+func _passage_bottom(st: SurfaceTool, xOffset = 0, yOffset = 0):
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0))
+	
+	st.add_uv(Vector2(0, 0))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(1, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(1, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(1, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0))
+
+func _passage_right(st: SurfaceTool, xOffset = 0, yOffset = 0):
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0))
+
+func _passage_left(st: SurfaceTool, xOffset = 0, yOffset = 0):
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2))
+
+func _passage_ceiling(st: SurfaceTool, xOffset = 0, yOffset = 0):
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0))
+
+
+
+
+
+
+
+
+
+
+
+
+

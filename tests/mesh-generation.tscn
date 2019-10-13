@@ -16,7 +16,7 @@ mesh = ExtResource( 2 )
 material/0 = null
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.980667, 0.195684, 0, -0.195684, 0.980667, 10.0857, 9.78943, 13.8413 )
+transform = Transform( 1, 0, 0, 0, 0.998619, 0.0525356, 0, -0.0525356, 0.998619, 15.4633, 8.35177, 15.3497 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
