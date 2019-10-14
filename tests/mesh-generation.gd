@@ -42,7 +42,6 @@ func _ready():
 			var mI = MeshInstance.new();
 			
 			mI.mesh = mesh
-			#mI.material_override = load("res://tests/new_Spatialmaterial.tres");
 			mI.translate(Vector3(x * CHUNK_SIZE * CUBE_SIZE, y * CHUNK_SIZE * CUBE_SIZE, 0));
 			chunks.add_child(mI);
 			mI.create_trimesh_collision();
@@ -57,12 +56,16 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	var st2 = SurfaceTool.new();
 	st2.begin(Mesh.PRIMITIVE_TRIANGLES);
 	
+	var st3 = SurfaceTool.new();
+	st3.begin(Mesh.PRIMITIVE_TRIANGLES);
+	
 	for y in range(CHUNK_SIZE):#range(terrain.size()):
 		for x in range(CHUNK_SIZE):#range(terrain[y].size()):
 			var yWorld = y + yOff * CHUNK_SIZE;
 			var xWorld = x + xOff * CHUNK_SIZE;
 			if yWorld >= terrain.size() || xWorld >= terrain[yWorld].size():
 				continue
+			_plane(st3, xWorld, yWorld, 0, x, y, true); # Inverted - FirstPerson
 			if terrain[yWorld][xWorld][0] == 0: # Fog of War
 				_plane(st2, xWorld, yWorld, 0, x, y);
 			if terrain[yWorld][xWorld][1] == 0:
@@ -79,12 +82,15 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	# Commit to a mesh.
 	var mesh = st.commit();
 	var mesh2 = st2.commit();
+	var mesh3 = st3.commit();
 	
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh2.surface_get_arrays(0));
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
+
 	mesh.surface_set_material(0, load("res://tests/new_Spatialmaterial.tres"));
 	mesh.surface_set_material(1, load("res://tests/new_shadermaterial.tres"));
+	mesh.surface_set_material(2, load("res://tests/new_Spatialmaterial.tres"));
 	#mesh.surface_get_material(1).set_shader_param('color', Color(.5, .5, .5));
-	print(mesh.get_surface_count())
 	return mesh;
 	
 	#print(ResourceSaver.save("res://tests/testMesh.tres", mesh, 32));
@@ -138,8 +144,27 @@ func _get_color(corner: int, xOffset = 0, yOffset = 0) -> Color:
 				return Color(0, 0, 0);
 	return Color(1, 1, 1);
 
-func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
-	if not _is_visible(x, y, false) && (_is_visible(x + 1, y + 1, false) || _is_visible(x - 1, y - 1, false)):
+func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0, inverted = false):
+	if inverted:
+		st.add_color(Color(1, 1, 1));
+		st.add_uv(Vector2(0, 1))
+		st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, z))
+		
+		st.add_uv(Vector2(0, 0))
+		st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
+		
+		st.add_uv(Vector2(1, 1))
+		st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, z))
+		
+		st.add_uv(Vector2(1, 0))
+		st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, z))
+		
+		st.add_uv(Vector2(1, 1))
+		st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, z))
+		
+		st.add_uv(Vector2(0, 0))
+		st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
+	elif not _is_visible(x, y, false) && (_is_visible(x + 1, y + 1, false) || _is_visible(x - 1, y - 1, false)):
 		st.add_color(_get_color(0, x, y));
 		st.add_uv(Vector2(0, 1))
 		st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, z))

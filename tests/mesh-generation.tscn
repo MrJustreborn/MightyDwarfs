@@ -35,6 +35,7 @@ material/0 = null
 mesh = ExtResource( 3 )
 material/0 = null
 material/1 = null
+material/2 = null
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.988503, 0.151203, 0, -0.151203, 0.988503, 25.6613, 26.1868, 34.1888 )
