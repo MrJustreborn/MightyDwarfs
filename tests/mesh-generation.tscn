@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://tests/mesh-generation.gd" type="Script" id=1]
 [ext_resource path="res://tests/testMesh.tres" type="ArrayMesh" id=2]
-[ext_resource path="res://icon.png" type="Texture" id=3]
+[ext_resource path="res://tests/testMesh2.tres" type="ArrayMesh" id=3]
+[ext_resource path="res://icon.png" type="Texture" id=4]
 
 [sub_resource type="Environment" id=1]
 background_mode = 1
@@ -16,7 +17,7 @@ height = 1.0
 radial_segments = 32
 
 [sub_resource type="SpatialMaterial" id=3]
-albedo_texture = ExtResource( 3 )
+albedo_texture = ExtResource( 4 )
 uv1_scale = Vector3( 5, 5, 5 )
 uv1_triplanar = true
 
@@ -29,6 +30,11 @@ script = ExtResource( 1 )
 visible = false
 mesh = ExtResource( 2 )
 material/0 = null
+
+[node name="MeshInstance2" type="MeshInstance" parent="Chunks"]
+mesh = ExtResource( 3 )
+material/0 = null
+material/1 = null
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.988503, 0.151203, 0, -0.151203, 0.988503, 25.6613, 26.1868, 34.1888 )

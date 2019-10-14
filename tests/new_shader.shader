@@ -1,6 +1,7 @@
 shader_type spatial;
 
-uniform sampler2D tex;
+uniform bool enable;
+uniform vec4 color: hint_color;
 
 float getAmount(float input) {
 	float low = 0.25;
@@ -15,10 +16,9 @@ float getAmount(float input) {
 }
 
 void fragment() {
-	vec3 texColor = texture(tex, UV).rgb;
-	vec3 texColor2 = vec3(0.0);
-	
-	vec3 finalColor = ((texColor * getAmount(COLOR.r) + texColor2 * (1.0 - getAmount(COLOR.r)))) / 2.0;
-	
-	ALBEDO.rgb = finalColor;
+	ALBEDO.rgb = color.rgb;
+	if (enable)
+		ALPHA = (1.0 - getAmount(COLOR.r)) * color.a;
+	else
+		ALPHA = 0.0;
 }
