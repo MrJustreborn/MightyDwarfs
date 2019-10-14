@@ -23,7 +23,10 @@ uv1_triplanar = true
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 1 )
 
-[node name="MeshInstance" type="MeshInstance" parent="."]
+[node name="Chunks" type="Spatial" parent="."]
+
+[node name="MeshInstance" type="MeshInstance" parent="Chunks"]
+visible = false
 mesh = ExtResource( 2 )
 material/0 = null
 
