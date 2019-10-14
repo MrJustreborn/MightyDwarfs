@@ -197,19 +197,19 @@ func _passage_bottom(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 
 func _passage_right(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_color(_get_color(3, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(0, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(3, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(1, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(1, 1))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(1, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(1, 1))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(1, xOffset, yOffset));
@@ -217,12 +217,12 @@ func _passage_right(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(3, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(0, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0 + z))
 
 func _passage_left(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_color(_get_color(2, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(0, xOffset, yOffset));
@@ -230,15 +230,15 @@ func _passage_left(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(2, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(0, 0))
 	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(2, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(0, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(1, 1))
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(0, xOffset, yOffset));
@@ -247,11 +247,11 @@ func _passage_left(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 
 func _passage_ceiling(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_color(_get_color(1, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(1, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(1, 1))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(0, xOffset, yOffset));
@@ -263,11 +263,11 @@ func _passage_ceiling(st: SurfaceTool, xOffset = 0, yOffset = 0, z = 0):
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
 	st.add_color(_get_color(0, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(0, 0))
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
 	st.add_color(_get_color(1, xOffset, yOffset));
-	st.add_uv(Vector2(0, 1))
+	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
 
 
