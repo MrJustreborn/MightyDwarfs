@@ -1,13 +1,42 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://tests/mesh-generation.gd" type="Script" id=1]
 [ext_resource path="res://tests/testMesh.tres" type="ArrayMesh" id=2]
 [ext_resource path="res://tests/testMesh2.tres" type="ArrayMesh" id=3]
 [ext_resource path="res://icon.png" type="Texture" id=4]
 
+[sub_resource type="QuadMesh" id=6]
+
+[sub_resource type="Shader" id=7]
+code = "shader_type spatial;
+
+void fragment() {
+	float depth = texture(DEPTH_TEXTURE, SCREEN_UV).r;
+	
+	depth = depth * 2.0 - 1.0;
+	depth = PROJECTION_MATRIX[3][2] / (depth + PROJECTION_MATRIX[2][2]);
+	depth = depth + VERTEX.z;
+	depth *= 0.1;
+	
+	ALBEDO = vec3(depth);
+	ALPHA = 0.75;
+
+	if (SCREEN_UV.x > 0.2 && SCREEN_UV.x < 0.5) {
+		if (SCREEN_UV.y > 0.2 && SCREEN_UV.y < 0.25) {
+			//ALPHA = 0.0;
+			//ALBEDO = vec3(.1,.1,.1);
+		}
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=8]
+shader = SubResource( 7 )
+
 [sub_resource type="Environment" id=1]
 background_mode = 1
 ambient_light_color = Color( 0.501961, 0.501961, 0.501961, 1 )
+fog_color = Color( 0.501961, 0.6, 0.701961, 0.415686 )
+fog_depth_end = 50.0
 tonemap_mode = 2
 
 [sub_resource type="CylinderMesh" id=2]
@@ -20,6 +49,13 @@ radial_segments = 32
 albedo_texture = ExtResource( 4 )
 uv1_scale = Vector3( 5, 5, 5 )
 uv1_triplanar = true
+
+[sub_resource type="CubeMesh" id=4]
+
+[sub_resource type="SpatialMaterial" id=5]
+flags_unshaded = true
+params_blend_mode = 1
+albedo_color = Color( 0.501961, 0.501961, 0.501961, 0.572549 )
 
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 1 )
@@ -40,6 +76,11 @@ material/2 = null
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.988503, 0.151203, 0, -0.151203, 0.988503, 25.6613, 26.1868, 34.1888 )
 
+[node name="MeshInstance" type="MeshInstance" parent="Camera"]
+transform = Transform( 10, 0, 0, 0, 9.90103, -1.40342, 0, 1.40342, 9.90103, 13.8898, 5.17193, -33.8119 )
+mesh = SubResource( 6 )
+material/0 = SubResource( 8 )
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
 
@@ -53,3 +94,15 @@ visible = false
 light_energy = 5.0
 shadow_enabled = true
 omni_range = 10.0
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 40.0558, 25.6318, -0.64621 )
+visible = false
+mesh = SubResource( 4 )
+material/0 = SubResource( 5 )
+
+[node name="MeshInstance3" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 40.8605, 26.5781, -2.33187 )
+visible = false
+mesh = SubResource( 4 )
+material/0 = SubResource( 5 )
