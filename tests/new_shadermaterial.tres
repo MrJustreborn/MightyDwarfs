@@ -5,4 +5,5 @@
 [resource]
 shader = ExtResource( 1 )
 shader_param/enable = true
+shader_param/enable_fog = true
 shader_param/color = Color( 0, 0, 0, 1 )

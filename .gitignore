@@ -1,3 +1,4 @@
 .import
-tests/testMesh2.tres
+
 tests/testMesh.tres
+tests/testMesh2.tres
