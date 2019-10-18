@@ -16,7 +16,7 @@ var terrain = [
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0,  1], [0,  1], [0,  1], [2,  4], [2,  4], [2,  4], [2,  4], [1,  1], [1,  1], [1,  1], [1,  1], [0,  0], [0,  0]],
+	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0,  1], [0,  1], [0,  1], [2,  4], [2,  4], [2,  4], [2,  4], [2,  1], [2,  1], [1,  1], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
@@ -67,7 +67,7 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 				continue
 			_plane(st3, xWorld, yWorld, 0, x, y, true); # Inverted - FirstPerson
 			#if terrain[yWorld][xWorld][0] == 0: # Fog of War
-			_plane(st2, xWorld, yWorld, 0, x, y);
+			_plane(st2, xWorld, yWorld, 0, x, y); # TODO: start/end plane
 			if terrain[yWorld][xWorld][1] == 0:
 				_plane(st, xWorld, yWorld, 0, x, y);
 			elif terrain[yWorld][xWorld][1] >= 1:
@@ -85,11 +85,11 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	var mesh3 = st3.commit();
 	
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh2.surface_get_arrays(0));
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
+	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
 
-	mesh.surface_set_material(0, load("res://tests/new_Spatialmaterial.tres"));
-	mesh.surface_set_material(1, load("res://tests/new_shadermaterial.tres"));
-	mesh.surface_set_material(2, load("res://tests/new_Spatialmaterial.tres"));
+	mesh.surface_set_material(0, load("res://tests/new_Spatialmaterial.tres")); #st  = normal
+	mesh.surface_set_material(1, load("res://tests/new_shadermaterial.tres"));  #st2 = fog of war and undiscovered
+	mesh.surface_set_material(2, load("res://tests/new_Spatialmaterial.tres")); #st3 = FirstPerson / normal
 	#mesh.surface_get_material(1).set_shader_param('color', Color(.5, .5, .5));
 	return mesh;
 	
