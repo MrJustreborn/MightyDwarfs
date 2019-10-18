@@ -139,23 +139,31 @@ func _is_wall(x, y, maxDepth = 1) -> bool:
 #
 func _get_color(corner: int, xOffset = 0, yOffset = 0) -> Color:
 	if _is_visible(xOffset, yOffset, false) && _is_fog(xOffset, yOffset):
-		return Color(1, 1, 1, 0);
-	elif  _is_visible(xOffset, yOffset, false):
 		return Color(1, 1, 1, 1);
+	elif  _is_visible(xOffset, yOffset, false):
+		return Color(1, 1, 1, 0);
 	match(corner):
 		0: 
 			if not _is_visible(xOffset - 1, yOffset + 1, false) && not _is_visible(xOffset, yOffset + 1, false) && not _is_visible(xOffset - 1, yOffset, false):
-				return Color(0, 0, 0, 1);
+				return Color(0, 0, 0, 0);
+			elif _is_fog(xOffset - 1, yOffset + 1) || _is_fog(xOffset, yOffset + 1) || _is_fog(xOffset - 1, yOffset):
+				return Color(1, 1, 1, 1);
 		1: 
 			if not _is_visible(xOffset + 1, yOffset + 1, false) && not _is_visible(xOffset, yOffset + 1, false) && not _is_visible(xOffset + 1, yOffset, false):
-				return Color(0, 0, 0, 1);
+				return Color(0, 0, 0, 0);
+			elif _is_fog(xOffset + 1, yOffset + 1) || _is_fog(xOffset, yOffset + 1) || _is_fog(xOffset + 1, yOffset):
+				return Color(1, 1, 1, 1);
 		2:
 			if not _is_visible(xOffset - 1, yOffset - 1, false) && not _is_visible(xOffset, yOffset - 1, false) && not _is_visible(xOffset - 1, yOffset, false):
-				return Color(0, 0, 0, 1);
+				return Color(0, 0, 0, 0);
+			elif _is_fog(xOffset - 1, yOffset - 1) || _is_fog(xOffset, yOffset - 1) || _is_fog(xOffset - 1, yOffset):
+				return Color(1, 1, 1, 1);
 		3:
 			if not _is_visible(xOffset + 1, yOffset - 1, false) && not _is_visible(xOffset, yOffset - 1, false) && not _is_visible(xOffset + 1, yOffset, false):
-				return Color(0, 0, 0, 1);
-	return Color(1, 1, 1);
+				return Color(0, 0, 0, 0);
+			elif _is_fog(xOffset + 1, yOffset - 1) || _is_fog(xOffset, yOffset - 1) || _is_fog(xOffset + 1, yOffset):
+				return Color(1, 1, 1, 1);
+	return Color(1, 1, 1, 0);
 
 func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0, inverted = false):
 	if inverted:
