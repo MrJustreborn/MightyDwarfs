@@ -10,7 +10,7 @@ var terrain = [
 	[[0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [1,  3], [1,  3], [1,  3], [1,  3], [1,  3], [1,  3], [1,  1], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [1,  3], [0,  0], [0,  0], [0,  0], [0,  0], [1,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [1,  3], [0,  0], [0,  0], [0,  0], [0,  0], [1,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [1,  1], [1,  1], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [1,  1], [1,  1], [1,  1], [1,  1], [1,  1], [1,  1], [1,  1], [0,  0], [0,  0], [0,  0], [1,  3], [1,  3], [1,  3], [1,  3], [1,  3], [1,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
+	[[0,  0], [1,  1], [1,  1], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [1,  1], [1,  1], [1,  1], [1,  1], [1,  1], [1,  1], [1,  1], [0,  0], [0,  0], [0,  0], [1,  3], [1,  3], [2,  3], [1,  3], [1,  3], [1,  3], [0,  0], [2,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  1], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
@@ -67,7 +67,7 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 				continue
 			_plane(st3, xWorld, yWorld, 0, x, y, true); # Inverted - FirstPerson
 			#if terrain[yWorld][xWorld][0] == 0: # Fog of War
-			_plane(st2, xWorld, yWorld, 0, x, y); # TODO: start/end plane
+			_fog(st2, xWorld, yWorld, 0, x, y); # TODO: start/end plane
 			if terrain[yWorld][xWorld][1] == 0:
 				_plane(st, xWorld, yWorld, 0, x, y);
 			elif terrain[yWorld][xWorld][1] >= 1:
@@ -85,7 +85,7 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	var mesh3 = st3.commit();
 	
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh2.surface_get_arrays(0));
-	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
 
 	mesh.surface_set_material(0, load("res://tests/new_Spatialmaterial.tres")); #st  = normal
 	mesh.surface_set_material(1, load("res://tests/new_shadermaterial.tres"));  #st2 = fog of war and undiscovered
@@ -119,7 +119,7 @@ func _is_fog(x, y) -> bool:
 		return true;
 	return false;
 
-func _is_wall(x, y, maxDepth = 1) -> bool:
+func _is_wall(x, y, maxDepth = 0) -> bool:
 	if y > terrain.size() - 1:
 		return true;
 	elif x > terrain[y].size() - 1:
@@ -238,6 +238,25 @@ func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0, inve
 		st.add_color(_get_color(2, x, y));
 		st.add_uv(Vector2(0, 0))
 		st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
+
+func _fog(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
+	_plane(st, x, y, z, xOffset, yOffset);
+	# Right
+	if _is_fog(x, y) && !_is_fog(x + 1, y) && !_is_wall(x + 1, y):
+		for i in range(terrain[y][x][1]):
+			_passage_left(st, x, y, -2 * i, xOffset + 1, yOffset);
+	# Left
+	if _is_fog(x, y) && !_is_fog(x - 1, y) && !_is_wall(x - 1, y):
+		for i in range(terrain[y][x][1]):
+			_passage_right(st, x, y, -2 * i, xOffset - 1, yOffset);
+	# Top
+	if _is_fog(x, y) && !_is_fog(x, y + 1) && !_is_wall(x, y + 1):
+		for i in range(terrain[y][x][1]):
+			_passage_bottom(st, x, y, -2 * i, xOffset, yOffset + 1);
+	# Bottom
+	if _is_fog(x, y) && !_is_fog(x, y - 1) && !_is_wall(x, y - 1):
+		for i in range(terrain[y][x][1]):
+			_passage_ceiling(st, x, y, -2 * i, xOffset, yOffset - 1);
 
 func _passage(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
 	if _is_wall(x, y - 1, -z/2):
