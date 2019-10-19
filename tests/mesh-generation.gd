@@ -20,21 +20,42 @@ var terrain = [
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [1,  2], [1,  2], [1,  2], [1,  2], [1,  1], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [1,  2], [1,  2], [1,  1], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [1,  2], [1,  2], [1,  1], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
+	[[0,  0], [1,  2], [1,  2], [1,  2], [2,  2], [2,  1], [2,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
+	[[0,  0], [1,  2], [1,  2], [1,  1], [2,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
+	[[0,  0], [1,  2], [1,  2], [1,  1], [2,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0]],
 ]
 
-const CHUNK_SIZE = 50;
+var dirty_chunks = []
+func update(x,y):
+	var xCHUNK = floor(x / CHUNK_SIZE);
+	var yCHUNK = floor(y / CHUNK_SIZE);
+	if terrain[y][x][0] == 0 || terrain[y][x][0] == 2:
+		terrain[y][x][0] = 1;
+		dirty_chunks.append(Vector2(xCHUNK, yCHUNK));
+
+const CHUNK_SIZE = 10;
 const CUBE_SIZE = 2;
 func _ready():
+	_calculate_complete_mesh();
+
+func _physics_process(delta):
+	for chunk in dirty_chunks:
+		print("Dirty: ", chunk)
+		var _name = str(chunk.x) + "-" + str(chunk.y);
+		var mI = get_node("Chunks").get_node(_name);
+		mI.mesh = _generate_mesh(chunk.x, chunk.y);
+	dirty_chunks = [];
+
+func _calculate_complete_mesh():
 	var yS = ceil(terrain.size() / float(CHUNK_SIZE));
 	var xS = ceil(terrain[0].size() / float(CHUNK_SIZE));
 	
 	print("Size: ", xS, " - ", yS)
 	
+	for c in chunks.get_children():
+		c.queue_free();
 	for y in range(yS):
 		for x in range(xS):
 			print(x, " - ",y)
@@ -44,9 +65,10 @@ func _ready():
 			mI.mesh = mesh
 			mI.translate(Vector3(x * CHUNK_SIZE * CUBE_SIZE, y * CHUNK_SIZE * CUBE_SIZE, 0));
 			chunks.add_child(mI);
-			mI.create_trimesh_collision();
+			mI.name = str(x) + "-" + str(y);
+			#mI.create_trimesh_collision();
 			#TODO: check dynamic memory leaks
-			print(ResourceSaver.save("res://tests/testMesh2.tres", mesh, 32));
+			#print(ResourceSaver.save("res://tests/testMesh2.tres", mesh, 32));
 
 
 func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
@@ -92,8 +114,6 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	mesh.surface_set_material(2, load("res://tests/new_textureShader.tres")); #st3 = FirstPerson / normal
 	#mesh.surface_get_material(1).set_shader_param('color', Color(.5, .5, .5));
 	return mesh;
-	
-	#print(ResourceSaver.save("res://tests/testMesh.tres", mesh, 32));
 
 func _is_visible(x, y, checkPassage = true) -> bool:
 	if y > terrain.size() - 1:
@@ -367,6 +387,8 @@ func _passage_ceiling(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset
 	st.add_color(_get_color(1, x, y));
 	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
+
+
 
 
 
