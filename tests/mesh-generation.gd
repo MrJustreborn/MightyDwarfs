@@ -87,9 +87,9 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh2.surface_get_arrays(0));
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
 
-	mesh.surface_set_material(0, load("res://tests/new_Spatialmaterial.tres")); #st  = normal
+	mesh.surface_set_material(0, load("res://tests/new_textureShader.tres")); #st  = normal
 	mesh.surface_set_material(1, load("res://tests/new_shadermaterial.tres"));  #st2 = fog of war and undiscovered
-	mesh.surface_set_material(2, load("res://tests/new_Spatialmaterial.tres")); #st3 = FirstPerson / normal
+	mesh.surface_set_material(2, load("res://tests/new_textureShader.tres")); #st3 = FirstPerson / normal
 	#mesh.surface_get_material(1).set_shader_param('color', Color(.5, .5, .5));
 	return mesh;
 	
