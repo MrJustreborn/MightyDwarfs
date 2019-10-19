@@ -28,12 +28,54 @@ var terrain = [
 ]
 
 var dirty_chunks = []
-func update(x,y):
+var first_flag = true;
+func update(x, y, radius = 2):
 	var xCHUNK = floor(x / CHUNK_SIZE);
 	var yCHUNK = floor(y / CHUNK_SIZE);
-	if terrain[y][x][0] == 0 || terrain[y][x][0] == 2:
-		terrain[y][x][0] = 1;
-		dirty_chunks.append(Vector2(xCHUNK, yCHUNK));
+	
+	# Make everything with fog
+	if first_flag:
+		first_flag = false;
+		for y in range(terrain.size()):
+			for x in range(terrain[0].size()):
+				if terrain[y][x][0] == 1:
+					terrain[y][x][0] = 2;
+					#new fog
+					var _xCHUNK = floor(x / CHUNK_SIZE);
+					var _yCHUNK = floor(y / CHUNK_SIZE);
+					if !dirty_chunks.has(Vector2(_xCHUNK, _yCHUNK)):
+						dirty_chunks.append(Vector2(_xCHUNK, _yCHUNK));
+	
+	for xOff in range(radius):
+		if _is_wall(x - xOff, y):
+			break
+		else:
+			_make_visible(x - xOff, y);
+	for xOff in range(radius):
+		if _is_wall(x + xOff, y):
+			break
+		else:
+			_make_visible(x + xOff, y);
+	
+	for yOff in range(radius):
+		if _is_wall(x, y - yOff):
+			break
+		else:
+			_make_visible(x, y - yOff);
+	for yOff in range(radius):
+		if _is_wall(x, y + yOff):
+			break
+		else:
+			_make_visible(x, y + yOff);
+
+func _make_visible(x, y):
+	var xCHUNK = floor(x / CHUNK_SIZE);
+	var yCHUNK = floor(y / CHUNK_SIZE);
+	if !_is_wall(x, y) && _cell_exists(x, y):
+		if terrain[y][x][0] == 0 || terrain[y][x][0] == 2:
+			terrain[y][x][0] = 1;
+		if !dirty_chunks.has(Vector2(xCHUNK, yCHUNK)):
+			dirty_chunks.append(Vector2(xCHUNK, yCHUNK));
 
 const CHUNK_SIZE = 10;
 const CUBE_SIZE = 2;
@@ -46,6 +88,7 @@ func _physics_process(delta):
 		var _name = str(chunk.x) + "-" + str(chunk.y);
 		var mI = get_node("Chunks").get_node(_name);
 		mI.mesh = _generate_mesh(chunk.x, chunk.y);
+		first_flag = true;
 	dirty_chunks = [];
 
 func _calculate_complete_mesh():
@@ -114,6 +157,13 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	mesh.surface_set_material(2, load("res://tests/new_textureShader.tres")); #st3 = FirstPerson / normal
 	#mesh.surface_get_material(1).set_shader_param('color', Color(.5, .5, .5));
 	return mesh;
+
+func _cell_exists(x, y):
+	if y > terrain.size() - 1 || x > terrain[y].size() - 1:
+		return false;
+	elif y <= 0 || x <= 0:
+		return false;
+	return true;
 
 func _is_visible(x, y, checkPassage = true) -> bool:
 	if y > terrain.size() - 1:
