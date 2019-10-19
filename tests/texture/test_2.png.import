@@ -1,0 +1,26 @@
+[remap]
+
+importer="texture_array"
+type="TextureArray"
+path.s3tc="res://.import/test_2.png-e0c6e92411e8c0e72c70a451a6864ecf.s3tc.texarr"
+path.etc2="res://.import/test_2.png-e0c6e92411e8c0e72c70a451a6864ecf.etc2.texarr"
+metadata={
+"imported_formats": [ "s3tc", "etc2" ],
+"vram_texture": true
+}
+
+[deps]
+
+source_file="res://tests/texture/test_2.png"
+dest_files=[ "res://.import/test_2.png-e0c6e92411e8c0e72c70a451a6864ecf.s3tc.texarr", "res://.import/test_2.png-e0c6e92411e8c0e72c70a451a6864ecf.etc2.texarr" ]
+
+[params]
+
+compress/mode=1
+compress/no_bptc_if_rgb=false
+flags/repeat=0
+flags/filter=true
+flags/mipmaps=false
+flags/srgb=2
+slices/horizontal=1
+slices/vertical=3
