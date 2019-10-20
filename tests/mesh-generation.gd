@@ -27,24 +27,28 @@ var terrain = [
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0]],
 ]
 
+var terrain_next_frame;
+
 var dirty_chunks = []
+var check_chunks = []
 var first_flag = true;
 func update(x, y, radius = 2):
-	var xCHUNK = floor(x / CHUNK_SIZE);
-	var yCHUNK = floor(y / CHUNK_SIZE);
+	#var xCHUNK = floor(x / CHUNK_SIZE);
+	#var yCHUNK = floor(y / CHUNK_SIZE);
 	
 	# Make everything with fog
 	if first_flag:
+		terrain_next_frame = terrain.duplicate(true);
 		first_flag = false;
-		for y in range(terrain.size()):
-			for x in range(terrain[0].size()):
-				if terrain[y][x][0] == 1:
-					terrain[y][x][0] = 2;
+		for y in range(terrain_next_frame.size()):
+			for x in range(terrain_next_frame[0].size()):
+				if terrain_next_frame[y][x][0] == 1:
+					terrain_next_frame[y][x][0] = 2;
 					#new fog
 					var _xCHUNK = floor(x / CHUNK_SIZE);
 					var _yCHUNK = floor(y / CHUNK_SIZE);
-					if !dirty_chunks.has(Vector2(_xCHUNK, _yCHUNK)):
-						dirty_chunks.append(Vector2(_xCHUNK, _yCHUNK));
+					if !check_chunks.has(Vector2(_xCHUNK, _yCHUNK)):
+						check_chunks.append(Vector2(_xCHUNK, _yCHUNK));
 	
 	for xOff in range(radius):
 		if _is_wall(x - xOff, y):
@@ -72,10 +76,10 @@ func _make_visible(x, y):
 	var xCHUNK = floor(x / CHUNK_SIZE);
 	var yCHUNK = floor(y / CHUNK_SIZE);
 	if !_is_wall(x, y) && _cell_exists(x, y):
-		if terrain[y][x][0] == 0 || terrain[y][x][0] == 2:
-			terrain[y][x][0] = 1;
-		if !dirty_chunks.has(Vector2(xCHUNK, yCHUNK)):
-			dirty_chunks.append(Vector2(xCHUNK, yCHUNK));
+		if terrain_next_frame[y][x][0] == 0 || terrain_next_frame[y][x][0] == 2:
+			terrain_next_frame[y][x][0] = 1;
+		if !check_chunks.has(Vector2(xCHUNK, yCHUNK)):
+			check_chunks.append(Vector2(xCHUNK, yCHUNK));
 
 const CHUNK_SIZE = 10;
 const CUBE_SIZE = 2;
@@ -83,13 +87,33 @@ func _ready():
 	_calculate_complete_mesh();
 
 func _physics_process(delta):
-	for chunk in dirty_chunks:
-		print("Dirty: ", chunk)
-		var _name = str(chunk.x) + "-" + str(chunk.y);
-		var mI = get_node("Chunks").get_node(_name);
-		mI.mesh = _generate_mesh(chunk.x, chunk.y);
+	for chunk in check_chunks:
+		#print("Check: ", chunk)
+		if _is_dirty(chunk) && !dirty_chunks.has(chunk):
+			dirty_chunks.append(chunk);
+	check_chunks = [];
+	
+	if !dirty_chunks.empty():
+		terrain = terrain_next_frame.duplicate(true);
+		for chunk in dirty_chunks:
+			print("Dirty: ", chunk)
+			var _name = str(chunk.x) + "-" + str(chunk.y);
+			var mI = get_node("Chunks").get_node(_name);
+			mI.mesh = _generate_mesh(chunk.x, chunk.y);
 		first_flag = true;
-	dirty_chunks = [];
+		dirty_chunks = [];
+		
+
+func _is_dirty(chunk: Vector2):
+	for y in range(CHUNK_SIZE):
+		for x in range(CHUNK_SIZE):
+			var yWorld = y + chunk.y * CHUNK_SIZE;
+			var xWorld = x + chunk.x * CHUNK_SIZE;
+			if yWorld >= terrain.size() || xWorld >= terrain[yWorld].size():
+				continue
+			if terrain[yWorld][xWorld] != terrain_next_frame[yWorld][xWorld]:
+				return true;
+	return false;
 
 func _calculate_complete_mesh():
 	var yS = ceil(terrain.size() / float(CHUNK_SIZE));
@@ -143,6 +167,14 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	st.index();
 	st.generate_normals();
 	st.generate_tangents();
+	
+	st2.index();
+	st2.generate_normals();
+	st2.generate_tangents();
+	
+	st3.index();
+	st3.generate_normals();
+	st3.generate_tangents();
 	
 	# Commit to a mesh.
 	var mesh = st.commit();
