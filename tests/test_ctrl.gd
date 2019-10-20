@@ -14,6 +14,7 @@ func _physics_process(delta):
 		move_and_slide(Vector3(0, 1, 0) * SPEED);
 	elif Input.is_action_pressed("ui_down"):
 		move_and_slide(Vector3(0, -1, 0) * SPEED);
+func _process(delta):
 	update();
 
 

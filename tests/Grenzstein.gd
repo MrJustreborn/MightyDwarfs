@@ -3,7 +3,7 @@ extends Spatial
 func _ready():
 	pass
 
-func _physics_process(delta):
+func _process(delta):
 	update();
 
 #var last_cell = Vector2();
