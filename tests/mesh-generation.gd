@@ -32,7 +32,7 @@ var terrain_next_frame;
 var dirty_chunks = []
 var check_chunks = []
 var first_flag = true;
-func update(x, y, radius = 2):
+func update(x, y, radius = 5):
 	#var xCHUNK = floor(x / CHUNK_SIZE);
 	#var yCHUNK = floor(y / CHUNK_SIZE);
 	
@@ -50,27 +50,59 @@ func update(x, y, radius = 2):
 					if !check_chunks.has(Vector2(_xCHUNK, _yCHUNK)):
 						check_chunks.append(Vector2(_xCHUNK, _yCHUNK));
 	
+	_mark_visible(x, y, radius);
+
+func _mark_visible(x, y, radius):
 	for xOff in range(radius):
 		if _is_wall(x - xOff, y):
 			break
 		else:
-			_make_visible(x - xOff, y);
+			for yOff in range(radius):
+				if _is_wall(x - xOff, y - yOff):
+					break;
+				else:
+					_make_visible(x - xOff, y - yOff);
+			for yOff in range(radius):
+				if _is_wall(x - xOff, y + yOff):
+					break;
+				else:
+					_make_visible(x - xOff, y + yOff);
 	for xOff in range(radius):
 		if _is_wall(x + xOff, y):
 			break
 		else:
-			_make_visible(x + xOff, y);
+			for yOff in range(radius):
+				if _is_wall(x + xOff, y - yOff):
+					break;
+				else:
+					_make_visible(x + xOff, y - yOff);
+			for yOff in range(radius):
+				if _is_wall(x + xOff, y + yOff):
+					break;
+				else:
+					_make_visible(x + xOff, y + yOff);
 	
-	for yOff in range(radius):
-		if _is_wall(x, y - yOff):
-			break
-		else:
-			_make_visible(x, y - yOff);
-	for yOff in range(radius):
-		if _is_wall(x, y + yOff):
-			break
-		else:
-			_make_visible(x, y + yOff);
+#	for xOff in range(radius):
+#		if _is_wall(x - xOff, y):
+#			break
+#		else:
+#			_make_visible(x - xOff, y);
+#	for xOff in range(radius):
+#		if _is_wall(x + xOff, y):
+#			break
+#		else:
+#			_make_visible(x + xOff, y);
+#	
+#	for yOff in range(radius):
+#		if _is_wall(x, y - yOff):
+#			break
+#		else:
+#			_make_visible(x, y - yOff);
+#	for yOff in range(radius):
+#		if _is_wall(x, y + yOff):
+#			break
+#		else:
+#			_make_visible(x, y + yOff);
 
 func _make_visible(x, y):
 	var xCHUNK = floor(x / CHUNK_SIZE);
