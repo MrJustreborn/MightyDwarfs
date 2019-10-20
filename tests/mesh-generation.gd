@@ -32,7 +32,7 @@ var terrain_next_frame;
 var dirty_chunks = []
 var check_chunks = []
 var first_flag = true;
-func update(x, y, radius = 5):
+func update(x, y, radius = 2):
 	#var xCHUNK = floor(x / CHUNK_SIZE);
 	#var yCHUNK = floor(y / CHUNK_SIZE);
 	
@@ -81,28 +81,6 @@ func _mark_visible(x, y, radius):
 					break;
 				else:
 					_make_visible(x + xOff, y + yOff);
-	
-#	for xOff in range(radius):
-#		if _is_wall(x - xOff, y):
-#			break
-#		else:
-#			_make_visible(x - xOff, y);
-#	for xOff in range(radius):
-#		if _is_wall(x + xOff, y):
-#			break
-#		else:
-#			_make_visible(x + xOff, y);
-#	
-#	for yOff in range(radius):
-#		if _is_wall(x, y - yOff):
-#			break
-#		else:
-#			_make_visible(x, y - yOff);
-#	for yOff in range(radius):
-#		if _is_wall(x, y + yOff):
-#			break
-#		else:
-#			_make_visible(x, y + yOff);
 
 func _make_visible(x, y):
 	var xCHUNK = floor(x / CHUNK_SIZE);
@@ -131,7 +109,9 @@ func _physics_process(delta):
 			print("Dirty: ", chunk)
 			var _name = str(chunk.x) + "-" + str(chunk.y);
 			var mI = get_node("Chunks").get_node(_name);
-			mI.mesh = _generate_mesh(chunk.x, chunk.y);
+			var data = _generate_mesh(chunk.x, chunk.y);
+			mI.mesh = data[0]; # Mesh data
+			mI.get_child(0).get_child(0).shape = data[1];
 		first_flag = true;
 		dirty_chunks = [];
 		
@@ -158,19 +138,24 @@ func _calculate_complete_mesh():
 	for y in range(yS):
 		for x in range(xS):
 			print(x, " - ",y)
-			var mesh = _generate_mesh(x, y);
+			var data = _generate_mesh(x, y);
 			var mI = MeshInstance.new();
 			
-			mI.mesh = mesh
+			mI.mesh = data[0] # mesh data
 			mI.translate(Vector3(x * CHUNK_SIZE * CUBE_SIZE, y * CHUNK_SIZE * CUBE_SIZE, 0));
 			chunks.add_child(mI);
 			mI.name = str(x) + "-" + str(y);
+			var col = StaticBody.new()
+			var colShape = CollisionShape.new()
+			colShape.shape = data[1]
+			mI.add_child(col)
+			col.add_child(colShape)
 			#mI.create_trimesh_collision();
 			#TODO: check dynamic memory leaks
 			#print(ResourceSaver.save("res://tests/testMesh2.tres", mesh, 32));
 
 
-func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
+func _generate_mesh(xOff = 0, yOff = 0) -> Array: #[mesh, shape, shape]
 	var st = SurfaceTool.new();
 	st.begin(Mesh.PRIMITIVE_TRIANGLES);
 	
@@ -213,6 +198,9 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	var mesh2 = st2.commit();
 	var mesh3 = st3.commit();
 	
+	var shape_cave = mesh.create_trimesh_shape();
+	var shape_fps = mesh3.create_trimesh_shape();
+	
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh2.surface_get_arrays(0));
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
 
@@ -220,7 +208,7 @@ func _generate_mesh(xOff = 0, yOff = 0) -> ArrayMesh:
 	mesh.surface_set_material(1, load("res://tests/new_shadermaterial.tres"));  #st2 = fog of war and undiscovered
 	mesh.surface_set_material(2, load("res://tests/new_textureShader.tres")); #st3 = FirstPerson / normal
 	#mesh.surface_get_material(1).set_shader_param('color', Color(.5, .5, .5));
-	return mesh;
+	return [mesh, shape_cave, shape_fps];
 
 func _cell_exists(x, y):
 	if y > terrain.size() - 1 || x > terrain[y].size() - 1:
