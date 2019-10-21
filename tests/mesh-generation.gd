@@ -1,6 +1,9 @@
 extends Spatial
 
 onready var chunks = $Chunks;
+onready var chunks_cave = $Chunks/cave;
+onready var chunks_fog = $Chunks/fog;
+onready var chunks_fps = $Chunks/firstPerson;
 
 # [visbile, depth]
 
@@ -32,6 +35,7 @@ var terrain_next_frame;
 var dirty_chunks = []
 var check_chunks = []
 var first_flag = true;
+var discovered_flag = false;
 func update(x, y, radius_fog = 5, radius_hidden = 2):
 	#var xCHUNK = floor(x / CHUNK_SIZE);
 	#var yCHUNK = floor(y / CHUNK_SIZE);
@@ -95,10 +99,11 @@ func _make_visible(x, y, fogOnly):
 		else:
 			if terrain_next_frame[y][x][0] == 0 || terrain_next_frame[y][x][0] == 2:
 				terrain_next_frame[y][x][0] = 1;
+				discovered_flag = true;
 			if !check_chunks.has(Vector2(xCHUNK, yCHUNK)):
 				check_chunks.append(Vector2(xCHUNK, yCHUNK));
 
-const CHUNK_SIZE = 5;
+const CHUNK_SIZE = 30;
 const CUBE_SIZE = 2;
 func _ready():
 	_calculate_complete_mesh();
@@ -113,14 +118,28 @@ func _process(delta):
 	if !dirty_chunks.empty():
 		terrain = terrain_next_frame.duplicate(true);
 		for chunk in dirty_chunks:
-			print("Dirty: ", chunk)
+			print("Dirty: ", chunk, " -> ", discovered_flag)
 			var _name = str(chunk.x) + "-" + str(chunk.y);
-			var mI = get_node("Chunks").get_node(_name);
-			var data = _generate_mesh(chunk.x, chunk.y);
-			mI.mesh = data[0]; # Mesh data
-			mI.get_child(0).get_child(0).shape = data[1];
+			
+			var mICave = chunks_cave.get_node(_name);
+			var mIFog = chunks_fog.get_node(_name);
+			var mIFps = chunks_fps.get_node(_name);
+			
+			var data = _generate_mesh(chunk.x, chunk.y, discovered_flag, true, discovered_flag);
+			
+			if data[0]:
+				mICave.mesh = data[0]; # Cave_Mesh data
+				mICave.get_child(0).get_child(0).shape = data[3];
+			
+			mIFog.mesh = data[1]; # Fog_Mesh data
+			
+			if data[2]:
+				mIFps.mesh = data[2]; # Fps_Mesh data
+				mIFps.get_child(0).get_child(0).shape = data[4];
+		
 		first_flag = true;
 		dirty_chunks = [];
+		discovered_flag = false;
 		
 
 func _is_dirty(chunk: Vector2):
@@ -140,37 +159,71 @@ func _calculate_complete_mesh():
 	
 	print("Size: ", xS, " - ", yS)
 	
-	for c in chunks.get_children():
+	for c in chunks_cave.get_children():
+		c.queue_free();
+	for c in chunks_fog.get_children():
+		c.queue_free();
+	for c in chunks_fps.get_children():
 		c.queue_free();
 	for y in range(yS):
 		for x in range(xS):
 			print(x, " - ",y)
 			var data = _generate_mesh(x, y);
-			var mI = MeshInstance.new();
-			
-			mI.mesh = data[0] # mesh data
-			mI.translate(Vector3(x * CHUNK_SIZE * CUBE_SIZE, y * CHUNK_SIZE * CUBE_SIZE, 0));
-			chunks.add_child(mI);
-			mI.name = str(x) + "-" + str(y);
-			var col = StaticBody.new()
-			var colShape = CollisionShape.new()
-			colShape.shape = data[1]
-			mI.add_child(col)
-			col.add_child(colShape)
+#			var mI = MeshInstance.new();
+#			
+#			mI.mesh = data[0] # mesh data
+#			mI.translate(Vector3(x * CHUNK_SIZE * CUBE_SIZE, y * CHUNK_SIZE * CUBE_SIZE, 0));
+#			chunks.add_child(mI);
+#			mI.name = str(x) + "-" + str(y);
+#			
+#			var col = StaticBody.new()
+#			var colShape = CollisionShape.new()
+#			colShape.shape = data[3]
+#			mI.add_child(col)
+#			col.add_child(colShape)
+#			col.connect("input_event", self, "_on_StaticBody_input_event", [Vector2(x, y)]);
 			#mI.create_trimesh_collision();
 			#TODO: check dynamic memory leaks
 			#print(ResourceSaver.save("res://tests/testMesh2.tres", mesh, 32));
+			
+			add_mesh_to(x, y, chunks_cave, data[0], data[3]);
+			add_mesh_to(x, y, chunks_fog, data[1]);
+			add_mesh_to(x, y, chunks_fps, data[2], data[4]);
 
+func add_mesh_to(x: int, y: int, node: Node, mesh: Mesh, shape: Shape = null):
+	var mI = MeshInstance.new();
+	mI.mesh = mesh
+	mI.translate(Vector3(x * CHUNK_SIZE * CUBE_SIZE, y * CHUNK_SIZE * CUBE_SIZE, 0));
+	node.add_child(mI);
+	mI.name = str(x) + "-" + str(y);
+	if shape:
+		var col = StaticBody.new();
+		var colShape = CollisionShape.new();
+		colShape.shape = shape;
+		mI.add_child(col);
+		col.add_child(colShape);
+		col.connect("input_event", self, "_on_StaticBody_input_event", [Vector2(x, y)]);
 
-func _generate_mesh(xOff = 0, yOff = 0) -> Array: #[mesh, shape, shape]
-	var st = SurfaceTool.new();
-	st.begin(Mesh.PRIMITIVE_TRIANGLES);
+func _on_StaticBody_input_event(camera, event, click_position, click_normal, shape_idx, data):
+	if event is InputEventMouseButton:
+		print(camera, "\t", event, "\t", click_position, "\t", click_normal, "\t", shape_idx, "\t", data)
+
+#TODO: split caves/FPS and fog for faster calculation, it doesn't need to calc the caves if only fog is changed
+func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInverted = true) -> Array: #[mesh_cave, mesh_fog, mesh_inverted, shape_cave, shape_inverted]
+	var st: SurfaceTool = null;
+	if calcCave:
+		st = SurfaceTool.new();
+		st.begin(Mesh.PRIMITIVE_TRIANGLES);
 	
-	var st2 = SurfaceTool.new();
-	st2.begin(Mesh.PRIMITIVE_TRIANGLES);
+	var st2: SurfaceTool = null;
+	if calcFog:
+		st2 = SurfaceTool.new();
+		st2.begin(Mesh.PRIMITIVE_TRIANGLES);
 	
-	var st3 = SurfaceTool.new();
-	st3.begin(Mesh.PRIMITIVE_TRIANGLES);
+	var st3: SurfaceTool = null;
+	if calcInverted:
+		st3 = SurfaceTool.new();
+		st3.begin(Mesh.PRIMITIVE_TRIANGLES);
 	
 	for y in range(CHUNK_SIZE):#range(terrain.size()):
 		for x in range(CHUNK_SIZE):#range(terrain[y].size()):
@@ -178,44 +231,56 @@ func _generate_mesh(xOff = 0, yOff = 0) -> Array: #[mesh, shape, shape]
 			var xWorld = x + xOff * CHUNK_SIZE;
 			if yWorld >= terrain.size() || xWorld >= terrain[yWorld].size():
 				continue
-			_plane(st3, xWorld, yWorld, 0, x, y, true); # Inverted - FirstPerson
-			#if terrain[yWorld][xWorld][0] == 0: # Fog of War
-			_fog(st2, xWorld, yWorld, 0, x, y); # TODO: start/end plane
-			if terrain[yWorld][xWorld][1] == 0:
-				_plane(st, xWorld, yWorld, 0, x, y);
-			elif terrain[yWorld][xWorld][1] >= 1:
-				_plane(st, xWorld, yWorld, -2 * terrain[yWorld][xWorld][1], x, y);
-				for i in range(terrain[yWorld][xWorld][1]):
-					_passage(st, xWorld, yWorld, -2 * i, x, y);
-	
-	st.index();
-	st.generate_normals();
-	st.generate_tangents();
-	
-	st2.index();
-	st2.generate_normals();
-	st2.generate_tangents();
-	
-	st3.index();
-	st3.generate_normals();
-	st3.generate_tangents();
+			if calcInverted:
+				_plane(st3, xWorld, yWorld, 0, x, y, true); # Inverted - FirstPerson
+			
+			if calcFog:
+				_fog(st2, xWorld, yWorld, 0, x, y); # Fog and undiscovered
+			
+			if calcCave:
+				if terrain[yWorld][xWorld][1] == 0:
+					_plane(st, xWorld, yWorld, 0, x, y);
+				elif terrain[yWorld][xWorld][1] >= 1:
+					_plane(st, xWorld, yWorld, -2 * terrain[yWorld][xWorld][1], x, y);
+					for i in range(terrain[yWorld][xWorld][1]):
+						_passage(st, xWorld, yWorld, -2 * i, x, y);
 	
 	# Commit to a mesh.
-	var mesh = st.commit();
-	var mesh2 = st2.commit();
-	var mesh3 = st3.commit();
+	var mesh = null;
+	var mesh2 = null;
+	var mesh3 = null;
 	
-	var shape_cave = mesh.create_trimesh_shape();
-	var shape_fps = mesh3.create_trimesh_shape();
+	if calcCave:
+		st.index();
+		st.generate_normals();
+		st.generate_tangents();
+		mesh = st.commit();
+		mesh.surface_set_material(0, load("res://tests/new_textureShader.tres")); #st  = normal
+	if calcFog:
+		st2.index();
+		st2.generate_normals();
+		st2.generate_tangents();
+		mesh2 = st2.commit();
+		mesh2.surface_set_material(0, load("res://tests/new_shadermaterial.tres"));  #st2 = fog of war and undiscovered
+	if calcInverted:
+		st3.index();
+		st3.generate_normals();
+		st3.generate_tangents();
+		mesh3 = st3.commit();
+		mesh3.surface_set_material(0, load("res://tests/new_textureShader.tres")); #st3 = FirstPerson / normal
 	
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh2.surface_get_arrays(0));
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
+	var shape_cave = null;
+	var shape_fps = null;
+	
+	if calcCave:
+		shape_cave = mesh.create_trimesh_shape();
+	if calcInverted:
+		shape_fps = mesh3.create_trimesh_shape();
+	
+	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh2.surface_get_arrays(0));
+	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
 
-	mesh.surface_set_material(0, load("res://tests/new_textureShader.tres")); #st  = normal
-	mesh.surface_set_material(1, load("res://tests/new_shadermaterial.tres"));  #st2 = fog of war and undiscovered
-	mesh.surface_set_material(2, load("res://tests/new_textureShader.tres")); #st3 = FirstPerson / normal
-	#mesh.surface_get_material(1).set_shader_param('color', Color(.5, .5, .5));
-	return [mesh, shape_cave, shape_fps];
+	return [mesh, mesh2, mesh3, shape_cave, shape_fps];
 
 func _cell_exists(x, y):
 	if y > terrain.size() - 1 || x > terrain[y].size() - 1:

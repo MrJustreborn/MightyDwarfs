@@ -16,6 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Wiggles nextGen"
+run/main_scene="res://tests/mesh-generation.tscn"
 config/icon="res://icon.png"
 
 [display]
