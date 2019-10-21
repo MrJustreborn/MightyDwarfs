@@ -32,6 +32,8 @@ var terrain = [
 
 var terrain_next_frame;
 
+var navigation: AStar = AStar.new();
+
 var dirty_chunks = []
 var check_chunks = []
 var first_flag = true;
@@ -103,7 +105,7 @@ func _make_visible(x, y, fogOnly):
 			if !check_chunks.has(Vector2(xCHUNK, yCHUNK)):
 				check_chunks.append(Vector2(xCHUNK, yCHUNK));
 
-const CHUNK_SIZE = 30;
+const CHUNK_SIZE = 5;
 const CUBE_SIZE = 2;
 func _ready():
 	_calculate_complete_mesh();
@@ -206,7 +208,12 @@ func add_mesh_to(x: int, y: int, node: Node, mesh: Mesh, shape: Shape = null):
 
 func _on_StaticBody_input_event(camera, event, click_position, click_normal, shape_idx, data):
 	if event is InputEventMouseButton:
-		print(camera, "\t", event, "\t", click_position, "\t", click_normal, "\t", shape_idx, "\t", data)
+		if event.button_index == 1 && event.button_mask == 0:
+			var toPos = navigation.get_closest_point(click_position);
+			var fromPos = navigation.get_closest_point($KinematicBody.translation);
+			var path = navigation.get_point_path(fromPos, toPos);
+			$KinematicBody.way_points = path;
+			print(camera, "\t", event, "\t", click_position, "\t", click_normal, "\t", shape_idx, "\t", data, "\n\tnavId: ", "from: ", fromPos, " to: ", toPos, " size: ", path.size())
 
 #TODO: split caves/FPS and fog for faster calculation, it doesn't need to calc the caves if only fog is changed
 func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInverted = true) -> Array: #[mesh_cave, mesh_fog, mesh_inverted, shape_cave, shape_inverted]
@@ -238,12 +245,16 @@ func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInv
 				_fog(st2, xWorld, yWorld, 0, x, y); # Fog and undiscovered
 			
 			if calcCave:
+				if terrain[yWorld][xWorld][1] != 0: # there is a way
+					_connect_navigation(xWorld, yWorld);
 				if terrain[yWorld][xWorld][1] == 0:
 					_plane(st, xWorld, yWorld, 0, x, y);
 				elif terrain[yWorld][xWorld][1] >= 1:
 					_plane(st, xWorld, yWorld, -2 * terrain[yWorld][xWorld][1], x, y);
 					for i in range(terrain[yWorld][xWorld][1]):
 						_passage(st, xWorld, yWorld, -2 * i, x, y);
+	
+	#print(navigation.get_points().size());
 	
 	# Commit to a mesh.
 	var mesh = null;
@@ -281,6 +292,21 @@ func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInv
 	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
 
 	return [mesh, mesh2, mesh3, shape_cave, shape_fps];
+
+func _connect_navigation(xWorld, yWorld):
+	var navPoint = Vector3(xWorld * CUBE_SIZE, yWorld * CUBE_SIZE, -1);
+	var pID = navigation.get_closest_point(navPoint);
+	if pID == -1 || navigation.get_point_position(pID) != navPoint:
+		navigation.add_point(navigation.get_available_point_id(), navPoint);
+		for x in range(-1, 2):
+			for y in range(-1, 2):
+				_connect_navigation_points_from(xWorld + x, yWorld + y, pID);
+func _connect_navigation_points_from(xWorld, yWorld, pID):
+	if !_is_wall(xWorld, yWorld):
+		var navPoint = Vector3(xWorld * CUBE_SIZE, yWorld * CUBE_SIZE, -1);
+		var testpID = navigation.get_closest_point(navPoint);
+		if navigation.get_point_position(testpID) == navPoint:
+			navigation.connect_points(pID, testpID);
 
 func _cell_exists(x, y):
 	if y > terrain.size() - 1 || x > terrain[y].size() - 1:
