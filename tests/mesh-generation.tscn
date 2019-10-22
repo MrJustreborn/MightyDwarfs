@@ -145,3 +145,5 @@ transform = Transform( 10, 0, 0, 0, 18, 0, 0, 0, 10, 40.129, 30, -0.1 )
 visible = false
 mesh = SubResource( 9 )
 material/0 = ExtResource( 7 )
+
+[node name="ImmediateGeometry" type="ImmediateGeometry" parent="."]

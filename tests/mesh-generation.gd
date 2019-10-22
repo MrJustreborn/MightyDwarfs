@@ -208,11 +208,16 @@ func add_mesh_to(x: int, y: int, node: Node, mesh: Mesh, shape: Shape = null):
 
 func _on_StaticBody_input_event(camera, event, click_position, click_normal, shape_idx, data):
 	if event is InputEventMouseButton:
-		if event.button_index == 1 && event.button_mask == 0:
+		if (event.button_index == 1 || event.button_index == 2) && event.button_mask == 0:
+			var n;
+			if event.button_index == 1:
+				n = $KinematicBody;
+			else:
+				n = $KinematicBody_WASD;
 			var toPos = navigation.get_closest_point(click_position);
-			var fromPos = navigation.get_closest_point($KinematicBody.translation);
+			var fromPos = navigation.get_closest_point(n.translation);
 			var path = navigation.get_point_path(fromPos, toPos);
-			$KinematicBody.way_points = path;
+			n.way_points = path;
 			print(camera, "\t", event, "\t", click_position, "\t", click_normal, "\t", shape_idx, "\t", data, "\n\tnavId: ", "from: ", fromPos, " to: ", toPos, " size: ", path.size())
 
 #TODO: split caves/FPS and fog for faster calculation, it doesn't need to calc the caves if only fog is changed
@@ -246,7 +251,7 @@ func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInv
 			
 			if calcCave:
 				if terrain[yWorld][xWorld][1] != 0: # there is a way
-					_connect_navigation(xWorld, yWorld);
+					_add_navigation_point(xWorld, yWorld);
 				if terrain[yWorld][xWorld][1] == 0:
 					_plane(st, xWorld, yWorld, 0, x, y);
 				elif terrain[yWorld][xWorld][1] >= 1:
@@ -291,22 +296,47 @@ func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInv
 	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh2.surface_get_arrays(0));
 	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
 
+	_connect_navigation_points();
 	return [mesh, mesh2, mesh3, shape_cave, shape_fps];
 
-func _connect_navigation(xWorld, yWorld):
+func _connect_navigation_points():
+	var points = navigation.get_points();
+	var ig = $ImmediateGeometry;
+	ig.begin(Mesh.PRIMITIVE_LINES)
+	for p in points:
+		var a = navigation.get_point_position(p);
+		var gridPos = Vector2(a.x / CUBE_SIZE, a.y / CUBE_SIZE);
+		var xWorld = gridPos.x;
+		var yWorld = gridPos.y;
+		_connect_navigation_points_from(xWorld - 1, yWorld, p);
+		_connect_navigation_points_from(xWorld + 1, yWorld, p);
+		_connect_navigation_points_from(xWorld, yWorld - 1, p);
+		_connect_navigation_points_from(xWorld, yWorld + 1, p);
+		
+		var connected = navigation.get_point_connections(p);
+		for c in connected:
+			var b = navigation.get_point_position(c);
+			ig.add_vertex(a);
+			ig.add_vertex(b);
+		#ig.add_vertex(a);
+	ig.end();
+
+func _add_navigation_point(xWorld, yWorld):
 	var navPoint = Vector3(xWorld * CUBE_SIZE, yWorld * CUBE_SIZE, -1);
 	var pID = navigation.get_closest_point(navPoint);
 	if pID == -1 || navigation.get_point_position(pID) != navPoint:
 		navigation.add_point(navigation.get_available_point_id(), navPoint);
-		for x in range(-1, 2):
-			for y in range(-1, 2):
-				_connect_navigation_points_from(xWorld + x, yWorld + y, pID);
+
 func _connect_navigation_points_from(xWorld, yWorld, pID):
 	if !_is_wall(xWorld, yWorld):
 		var navPoint = Vector3(xWorld * CUBE_SIZE, yWorld * CUBE_SIZE, -1);
 		var testpID = navigation.get_closest_point(navPoint);
 		if navigation.get_point_position(testpID) == navPoint:
 			navigation.connect_points(pID, testpID);
+		else:
+			var newId = navigation.get_available_point_id();
+			navigation.add_point(newId, navPoint);
+			navigation.connect_points(pID, newId);
 
 func _cell_exists(x, y):
 	if y > terrain.size() - 1 || x > terrain[y].size() - 1:
