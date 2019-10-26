@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://tests/caves/test_1.obj" type="ArrayMesh" id=1]
+
+[sub_resource type="Curve3D" id=1]
+_data = {
+"points": PoolVector3Array( 0, 0, 0, 0, 0, 0, -0.0118897, 0.0166016, -0.0108337, 0, 0, 0, 0, 0, 0, 2.6883, 0.0180664, -0.00906038, 0, 0, 0, 0, 0, 0, 5.59977, -0.000976562, 0.0104761, 0, 0, 0, 0, 0, 0, 8.00603, 0.0175781, 0.00389385 ),
+"tilts": PoolRealArray( 0, 0, 0, 0 )
+}
+
+[node name="Spatial" type="Spatial"]
+
+[node name="test_1" type="MeshInstance" parent="."]
+mesh = ExtResource( 1 )
+material/0 = null
+
+[node name="Spatial" type="Spatial" parent="."]
+
+[node name="Path" type="Path" parent="Spatial"]
+curve = SubResource( 1 )
