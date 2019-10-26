@@ -7,7 +7,7 @@
 
 [resource]
 shader = ExtResource( 1 )
-shader_param/shadow_color = Color( 0, 1, 0.321569, 0.631373 )
+shader_param/shadow_color = Color( 0, 0, 0, 1 )
 shader_param/tex = ExtResource( 3 )
 shader_param/types = ExtResource( 4 )
 shader_param/destruction = ExtResource( 2 )

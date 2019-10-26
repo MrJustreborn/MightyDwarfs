@@ -322,6 +322,9 @@ func _connect_navigation_points():
 	ig.end();
 
 func _add_navigation_point(xWorld, yWorld):
+	if (terrain[yWorld][xWorld][1] > 1 || terrain[yWorld][xWorld][1] < 0) && !_is_wall(xWorld, yWorld - 1):
+		#print("cave")
+		return
 	var navPoint = Vector3(xWorld * CUBE_SIZE, yWorld * CUBE_SIZE, -1);
 	var pID = navigation.get_closest_point(navPoint);
 	if pID == -1 || navigation.get_point_position(pID) != navPoint:
@@ -333,10 +336,10 @@ func _connect_navigation_points_from(xWorld, yWorld, pID):
 		var testpID = navigation.get_closest_point(navPoint);
 		if navigation.get_point_position(testpID) == navPoint:
 			navigation.connect_points(pID, testpID);
-		else:
-			var newId = navigation.get_available_point_id();
-			navigation.add_point(newId, navPoint);
-			navigation.connect_points(pID, newId);
+		#else:
+		#	var newId = navigation.get_available_point_id();
+		#	navigation.add_point(newId, navPoint);
+		#	navigation.connect_points(pID, newId);
 
 func _cell_exists(x, y):
 	if y > terrain.size() - 1 || x > terrain[y].size() - 1:
@@ -376,7 +379,7 @@ func _is_wall(x, y, maxDepth = 0) -> bool:
 		return true;
 	elif y <= 0 || x <= 0:
 		return true;
-	elif terrain[y][x][1] <= maxDepth && terrain[y][x][1] > 0:
+	elif terrain[y][x][1] <= maxDepth && terrain[y][x][1] > 0: #TODO: this makes no sense
 		return true;
 	elif terrain[y][x][1] != 0:
 		return false;
