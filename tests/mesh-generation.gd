@@ -5,11 +5,10 @@ onready var chunks_cave = $Chunks/cave;
 onready var chunks_fog = $Chunks/fog;
 onready var chunks_fps = $Chunks/firstPerson;
 
-# [visbile, depth]
+# [visbile, depth, type]
 # dark=0
 # vis=1
 # fog=2
-
 var terrain = []
 
 var terrain_next_frame;
@@ -174,22 +173,6 @@ func _calculate_complete_mesh():
 		for x in range(xS):
 			print(x, " - ",y)
 			var data = _generate_mesh(x, y);
-#			var mI = MeshInstance.new();
-#			
-#			mI.mesh = data[0] # mesh data
-#			mI.translate(Vector3(x * CHUNK_SIZE * CUBE_SIZE, y * CHUNK_SIZE * CUBE_SIZE, 0));
-#			chunks.add_child(mI);
-#			mI.name = str(x) + "-" + str(y);
-#			
-#			var col = StaticBody.new()
-#			var colShape = CollisionShape.new()
-#			colShape.shape = data[3]
-#			mI.add_child(col)
-#			col.add_child(colShape)
-#			col.connect("input_event", self, "_on_StaticBody_input_event", [Vector2(x, y)]);
-			#mI.create_trimesh_collision();
-			#TODO: check dynamic memory leaks
-			#print(ResourceSaver.save("res://tests/testMesh2.tres", mesh, 32));
 			
 			add_mesh_to(x, y, chunks_cave, data[0], data[3]);
 			add_mesh_to(x, y, chunks_fog, data[1]);
@@ -303,9 +286,6 @@ func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInv
 		shape_cave = mesh.create_trimesh_shape();
 	if calcInverted:
 		shape_fps = mesh3.create_trimesh_shape();
-	
-	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh2.surface_get_arrays(0));
-	#mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh3.surface_get_arrays(0));
 
 	_connect_navigation_points();
 	return [mesh, mesh2, mesh3, shape_cave, shape_fps];
@@ -426,33 +406,33 @@ func _is_corner_right(x, y, difference = 1) -> bool:
 #b = abbau
 #a = shadow
 func _get_color(corner: int, x = 0, y = 0) -> Color:
-	return Color(1, 0, 0, 0);
+	var type = terrain[y][x][2] / 255.0;
 	if _is_visible(x, y, false) && _is_fog(x, y):
-		return Color(1, 1, 1, 1);
+		return Color(1, type, 1, 1);
 	elif  _is_visible(x, y, false):
-		return Color(1, 1, 1, 0);
+		return Color(1, type, 1, 0);
 	match(corner):
 		0: 
 			if not _is_visible(x - 1, y + 1, false) && not _is_visible(x, y + 1, false) && not _is_visible(x - 1, y, false):
-				return Color(0, 0, 0, 0);
+				return Color(0, type, 0, 0);
 			elif _is_fog(x - 1, y + 1) || _is_fog(x, y + 1) || _is_fog(x - 1, y):
-				return Color(1, 1, 1, 1);
+				return Color(1, type, 1, 1);
 		1: 
 			if not _is_visible(x + 1, y + 1, false) && not _is_visible(x, y + 1, false) && not _is_visible(x + 1, y, false):
-				return Color(0, 0, 0, 0);
+				return Color(0, type, 0, 0);
 			elif _is_fog(x + 1, y + 1) || _is_fog(x, y + 1) || _is_fog(x + 1, y):
-				return Color(1, 1, 1, 1);
+				return Color(1, type, 1, 1);
 		2:
 			if not _is_visible(x - 1, y - 1, false) && not _is_visible(x, y - 1, false) && not _is_visible(x - 1, y, false):
-				return Color(0, 0, 0, 0);
+				return Color(0, type, 0, 0);
 			elif _is_fog(x - 1, y - 1) || _is_fog(x, y - 1) || _is_fog(x - 1, y):
-				return Color(1, 1, 1, 1);
+				return Color(1, type, 1, 1);
 		3:
 			if not _is_visible(x + 1, y - 1, false) && not _is_visible(x, y - 1, false) && not _is_visible(x + 1, y, false):
-				return Color(0, 0, 0, 0);
+				return Color(0, type, 0, 0);
 			elif _is_fog(x + 1, y - 1) || _is_fog(x, y - 1) || _is_fog(x + 1, y):
-				return Color(1, 1, 1, 1);
-	return Color(1, 1, 1, 0);
+				return Color(1, type, 1, 1);
+	return Color(1, type, 1, 0);
 
 func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0, inverted = false):
 	if inverted:
