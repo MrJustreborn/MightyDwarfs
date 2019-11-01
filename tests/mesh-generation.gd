@@ -6,6 +6,9 @@ onready var chunks_fog = $Chunks/fog;
 onready var chunks_fps = $Chunks/firstPerson;
 
 # [visbile, depth]
+# dark=0
+# vis=1
+# fog=2
 
 var terrain = [
 	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0]],
@@ -38,14 +41,14 @@ var dirty_chunks = []
 var check_chunks = []
 var first_flag = true;
 var discovered_flag = false;
-func update(x, y, radius_fog = 5, radius_hidden = 2):
+func update(x, y, radius_fog = 5, radius_hidden = 2, newDepth = 1):
 	#var xCHUNK = floor(x / CHUNK_SIZE);
 	#var yCHUNK = floor(y / CHUNK_SIZE);
 	
 	# Make everything with fog
 	if first_flag:
-		terrain_next_frame = terrain.duplicate(true);
 		first_flag = false;
+		terrain_next_frame = terrain.duplicate(true);
 		for y in range(terrain_next_frame.size()):
 			for x in range(terrain_next_frame[0].size()):
 				if terrain_next_frame[y][x][0] == 1:
@@ -55,9 +58,16 @@ func update(x, y, radius_fog = 5, radius_hidden = 2):
 					var _yCHUNK = floor(y / CHUNK_SIZE);
 					if !check_chunks.has(Vector2(_xCHUNK, _yCHUNK)):
 						check_chunks.append(Vector2(_xCHUNK, _yCHUNK));
+				if terrain_next_frame[y][x][1] != newDepth:
+					#new depth
+					var _xCHUNK = floor(x / CHUNK_SIZE);
+					var _yCHUNK = floor(y / CHUNK_SIZE);
+					if !check_chunks.has(Vector2(_xCHUNK, _yCHUNK)):
+						check_chunks.append(Vector2(_xCHUNK, _yCHUNK));
 	
 	_mark_visible(x, y, radius_fog, true);
 	_mark_visible(x, y, radius_hidden, false);
+	_update_depth(x, y, newDepth)
 
 func _mark_visible(x, y, radius, fogOnly):
 	for xOff in range(radius):
@@ -104,6 +114,15 @@ func _make_visible(x, y, fogOnly):
 				discovered_flag = true;
 			if !check_chunks.has(Vector2(xCHUNK, yCHUNK)):
 				check_chunks.append(Vector2(xCHUNK, yCHUNK));
+
+func _update_depth(x, y, depth):
+	var xCHUNK = floor(x / CHUNK_SIZE);
+	var yCHUNK = floor(y / CHUNK_SIZE);
+	#if !_is_wall(x, y) && _cell_exists(x, y):
+	if terrain_next_frame[y][x][1] != depth:
+		terrain_next_frame[y][x][1] = depth;
+	if !check_chunks.has(Vector2(xCHUNK, yCHUNK)):
+		check_chunks.append(Vector2(xCHUNK, yCHUNK));
 
 const CHUNK_SIZE = 5;
 const CUBE_SIZE = 2;
@@ -219,6 +238,23 @@ func _on_StaticBody_input_event(camera, event, click_position, click_normal, sha
 			var path = navigation.get_point_path(fromPos, toPos);
 			n.way_points = path;
 			print(camera, "\t", event, "\t", click_position, "\t", click_normal, "\t", shape_idx, "\t", data, "\n\tnavId: ", "from: ", fromPos, " to: ", toPos, " size: ", path.size())
+		elif event.button_index == 3 && event.button_mask == 0:
+			#print(click_position, click_normal)
+			if click_normal == Vector3(0, 0, 1):
+				var x = round(click_position.x / 2)
+				var y = round(click_position.y / 2)
+				print("here: ", Vector2(x, y), " terrain: ", terrain[y][x])
+				#terrain[y][x] = [0, 1]
+				discovered_flag = true
+#				var _xCHUNK = floor(x / CHUNK_SIZE);
+#				var _yCHUNK = floor(y / CHUNK_SIZE);
+#				var chunk = Vector2(_xCHUNK, _yCHUNK)
+#				if !dirty_chunks.has(chunk):
+#					dirty_chunks.append(chunk);
+				#print(terrain[y][x], " -> ", terrain_next_frame[y][x])
+				update(x, y, 1, 1, 1)
+				#print("here: ", Vector2(x, y), " terrain: ", terrain[y][x])
+				#print("here: ", Vector2(x, y), " terrain: ", terrain_next_frame[y][x])
 
 #TODO: split caves/FPS and fog for faster calculation, it doesn't need to calc the caves if only fog is changed
 func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInverted = true) -> Array: #[mesh_cave, mesh_fog, mesh_inverted, shape_cave, shape_inverted]

@@ -77,7 +77,7 @@ func update():
 	var y = round(translation.y / 2)
 	var cur_cell = Vector2(x,y);
 	if last_cell != cur_cell:
-		print(last_cell, cur_cell)
+		#print(last_cell, cur_cell)
 		last_cell = cur_cell;
 		#print("update")
 	CTRL.update(x,y);
