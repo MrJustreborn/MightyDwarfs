@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Deep Underground - Untitled Dwarf Game"
+config/name="Mighty Dwarfs - Yggdrasil"
 run/main_scene="res://tests/mesh-generation.tscn"
 config/icon="res://icon.png"
 

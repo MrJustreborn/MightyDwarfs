@@ -211,9 +211,9 @@ func _on_StaticBody_input_event(camera, event, click_position, click_normal, sha
 		if (event.button_index == 1 || event.button_index == 2) && event.button_mask == 0:
 			var n;
 			if event.button_index == 1:
-				n = $KinematicBody;
+				n = $dwarfs/Left;
 			else:
-				n = $KinematicBody_WASD;
+				n = $dwarfs/Right;
 			var toPos = navigation.get_closest_point(click_position);
 			var fromPos = navigation.get_closest_point(n.translation);
 			var path = navigation.get_point_path(fromPos, toPos);
