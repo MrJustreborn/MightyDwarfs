@@ -54,16 +54,10 @@ func update(x, y, radius_fog = 5, radius_hidden = 2, newDepth = 1):
 				if terrain_next_frame[y][x][0] == 1:
 					terrain_next_frame[y][x][0] = 2;
 					#new fog
-					var _xCHUNK = floor(x / CHUNK_SIZE);
-					var _yCHUNK = floor(y / CHUNK_SIZE);
-					if !check_chunks.has(Vector2(_xCHUNK, _yCHUNK)):
-						check_chunks.append(Vector2(_xCHUNK, _yCHUNK));
-				if terrain_next_frame[y][x][1] != newDepth:
+					_add_check_chunk(x, y)
+				#if terrain_next_frame[y][x][1] >= 0 && terrain_next_frame[y][x][1] < newDepth:
 					#new depth
-					var _xCHUNK = floor(x / CHUNK_SIZE);
-					var _yCHUNK = floor(y / CHUNK_SIZE);
-					if !check_chunks.has(Vector2(_xCHUNK, _yCHUNK)):
-						check_chunks.append(Vector2(_xCHUNK, _yCHUNK));
+				#	_add_check_chunk(x, y)
 	
 	_mark_visible(x, y, radius_fog, true);
 	_mark_visible(x, y, radius_hidden, false);
@@ -100,29 +94,36 @@ func _mark_visible(x, y, radius, fogOnly):
 					_make_visible(x + xOff, y + yOff, fogOnly);
 
 func _make_visible(x, y, fogOnly):
-	var xCHUNK = floor(x / CHUNK_SIZE);
-	var yCHUNK = floor(y / CHUNK_SIZE);
 	if !_is_wall(x, y) && _cell_exists(x, y):
 		if fogOnly:
 			if terrain_next_frame[y][x][0] == 2:
 				terrain_next_frame[y][x][0] = 1;
-			if !check_chunks.has(Vector2(xCHUNK, yCHUNK)):
-				check_chunks.append(Vector2(xCHUNK, yCHUNK));
+			_add_check_chunk(x, y)
 		else:
 			if terrain_next_frame[y][x][0] == 0 || terrain_next_frame[y][x][0] == 2:
 				terrain_next_frame[y][x][0] = 1;
 				discovered_flag = true;
-			if !check_chunks.has(Vector2(xCHUNK, yCHUNK)):
-				check_chunks.append(Vector2(xCHUNK, yCHUNK));
+			_add_check_chunk(x, y)
 
 func _update_depth(x, y, depth):
+	if terrain_next_frame[y][x][1] >= 0 && terrain_next_frame[y][x][1] < depth:
+		terrain_next_frame[y][x][1] = depth;
+		_add_check_chunk(x, y)
+
+func _add_check_chunk(x, y):
 	var xCHUNK = floor(x / CHUNK_SIZE);
 	var yCHUNK = floor(y / CHUNK_SIZE);
-	#if !_is_wall(x, y) && _cell_exists(x, y):
-	if terrain_next_frame[y][x][1] != depth:
-		terrain_next_frame[y][x][1] = depth;
-	if !check_chunks.has(Vector2(xCHUNK, yCHUNK)):
-		check_chunks.append(Vector2(xCHUNK, yCHUNK));
+	var chunk = Vector2(xCHUNK, yCHUNK)
+	if !check_chunks.has(chunk):
+		check_chunks.append(chunk);
+#	for xOff in range(-1, 2):
+#		for yOff in range(-1, 2):
+#			xCHUNK = floor(x + xOff / CHUNK_SIZE);
+#			yCHUNK = floor(y + yOff / CHUNK_SIZE);
+#			var chunk_neighbor = Vector2(xCHUNK, yCHUNK);
+#			print(xOff, yOff, chunk_neighbor, chunk)
+#			if chunk_neighbor != chunk && !check_chunks.has(chunk):
+#				check_chunks.append(chunk);
 
 const CHUNK_SIZE = 5;
 const CUBE_SIZE = 2;
@@ -172,6 +173,16 @@ func _is_dirty(chunk: Vector2):
 				continue
 			if terrain[yWorld][xWorld] != terrain_next_frame[yWorld][xWorld]:
 				return true;
+			
+			#check neighbor
+			for xOff in range(-1, 2):
+				for yOff in range(-1, 2):
+					if yWorld + yOff < 0 || xWorld + xOff < 0:
+						continue
+					if yWorld + yOff >= terrain.size() || xWorld + xOff >= terrain[yWorld + yOff].size():
+						continue
+					if terrain[yWorld + yOff][xWorld + xOff] != terrain_next_frame[yWorld + yOff][xWorld + xOff]:
+						return true;
 	return false;
 
 func _calculate_complete_mesh():
