@@ -10,28 +10,7 @@ onready var chunks_fps = $Chunks/firstPerson;
 # vis=1
 # fog=2
 
-var terrain = [
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0]],
-	[[0,  0], [1,  1], [1,  1], [0,  1], [0,  1], [0,  1], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [1,  1], [1,  1], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [1,  1], [1,  3], [1,  3], [1,  3], [1,  3], [1,  3], [1,  1], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [1,  1], [1,  1], [0,  1], [0,  1], [0,  1], [1,  1], [0,  1], [0,  1], [1,  1], [1,  1], [1,  1], [1,  1], [1,  1], [1,  1], [1,  1], [0,  1], [0,  1], [0,  1], [1,  1], [1,  3], [2,  3], [1,  3], [1,  3], [1,  3], [0,  0], [2,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  1], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  3], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0,  1], [0,  1], [0,  1], [2,  4], [2,  4], [2,  4], [2,  4], [2,  1], [2,  1], [1,  1], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [1,  2], [1,  2], [1,  2], [2,  2], [2,  1], [2,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [1,  2], [1,  2], [1,  1], [2,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [1,  2], [1,  2], [1,  1], [2,  1], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [2,  4], [2,  4], [2,  4], [2,  4], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [1,  1], [0,  0], [0,  0]],
-	[[0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0], [0,  0]],
-]
+var terrain = []
 
 var terrain_next_frame;
 
@@ -55,9 +34,6 @@ func update(x, y, radius_fog = 5, radius_hidden = 2, newDepth = 1):
 					terrain_next_frame[y][x][0] = 2;
 					#new fog
 					_add_check_chunk(x, y)
-				#if terrain_next_frame[y][x][1] >= 0 && terrain_next_frame[y][x][1] < newDepth:
-					#new depth
-				#	_add_check_chunk(x, y)
 	
 	_mark_visible(x, y, radius_fog, true);
 	_mark_visible(x, y, radius_hidden, false);
@@ -120,6 +96,11 @@ func _add_check_chunk(x, y):
 const CHUNK_SIZE = 5;
 const CUBE_SIZE = 2;
 func _ready():
+	var f = File.new()
+	f.open("res://maps/test.json", File.READ)
+	var res = JSON.parse(f.get_as_text()).result
+	#print(res['terrain'])
+	terrain = res['terrain'].duplicate(true)
 	_calculate_complete_mesh();
 
 func _process(delta):
@@ -247,17 +228,8 @@ func _on_StaticBody_input_event(camera, event, click_position, click_normal, sha
 				var x = round(click_position.x / 2)
 				var y = round(click_position.y / 2)
 				print("here: ", Vector2(x, y), " terrain: ", terrain[y][x])
-				#terrain[y][x] = [0, 1]
 				discovered_flag = true
-#				var _xCHUNK = floor(x / CHUNK_SIZE);
-#				var _yCHUNK = floor(y / CHUNK_SIZE);
-#				var chunk = Vector2(_xCHUNK, _yCHUNK)
-#				if !dirty_chunks.has(chunk):
-#					dirty_chunks.append(chunk);
-				#print(terrain[y][x], " -> ", terrain_next_frame[y][x])
 				update(x, y, 1, 1, 1)
-				#print("here: ", Vector2(x, y), " terrain: ", terrain[y][x])
-				#print("here: ", Vector2(x, y), " terrain: ", terrain_next_frame[y][x])
 
 #TODO: split caves/FPS and fog for faster calculation, it doesn't need to calc the caves if only fog is changed
 func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInverted = true) -> Array: #[mesh_cave, mesh_fog, mesh_inverted, shape_cave, shape_inverted]
@@ -426,36 +398,59 @@ func _is_wall(x, y, maxDepth = 0) -> bool:
 		return false;
 	return true;
 
+func _is_corner_left(x, y) -> bool:
+#	if y > terrain.size() - 1:
+#		return false;
+#	elif x > terrain[y].size() - 1:
+#		return false;
+#	elif terrain[y][x - 1][1] > terrain[y][x][1] && terrain[y - 1][x][1] > terrain[y][x][1]:
+#		return true;
+	return false;
+func _is_corner_right(x, y, difference = 1) -> bool:
+#	if y > terrain.size() - 1:
+#		return false;
+#	elif x > terrain[y].size() - 2:
+#		return false;
+#	elif terrain[y][x + 1][1] - terrain[y][x][1] >= difference && terrain[y - 1][x][1] - terrain[y][x][1] >= difference:
+#		return true;
+	return false;
+
 #
 # 0   1
 #
 # 2   3
 #
-func _get_color(corner: int, xOffset = 0, yOffset = 0) -> Color:
-	if _is_visible(xOffset, yOffset, false) && _is_fog(xOffset, yOffset):
+
+#r = shadow
+#g = type
+#b = abbau
+#a = shadow
+func _get_color(corner: int, x = 0, y = 0) -> Color:
+	return Color(1, 0, 0, 0);
+	if _is_visible(x, y, false) && _is_fog(x, y):
 		return Color(1, 1, 1, 1);
-	elif  _is_visible(xOffset, yOffset, false):
+	elif  _is_visible(x, y, false):
 		return Color(1, 1, 1, 0);
 	match(corner):
 		0: 
-			if not _is_visible(xOffset - 1, yOffset + 1, false) && not _is_visible(xOffset, yOffset + 1, false) && not _is_visible(xOffset - 1, yOffset, false):
+			if not _is_visible(x - 1, y + 1, false) && not _is_visible(x, y + 1, false) && not _is_visible(x - 1, y, false):
 				return Color(0, 0, 0, 0);
-			elif _is_fog(xOffset - 1, yOffset + 1) || _is_fog(xOffset, yOffset + 1) || _is_fog(xOffset - 1, yOffset):
+			elif _is_fog(x - 1, y + 1) || _is_fog(x, y + 1) || _is_fog(x - 1, y):
 				return Color(1, 1, 1, 1);
 		1: 
-			if not _is_visible(xOffset + 1, yOffset + 1, false) && not _is_visible(xOffset, yOffset + 1, false) && not _is_visible(xOffset + 1, yOffset, false):
+			if not _is_visible(x + 1, y + 1, false) && not _is_visible(x, y + 1, false) && not _is_visible(x + 1, y, false):
 				return Color(0, 0, 0, 0);
-			elif _is_fog(xOffset + 1, yOffset + 1) || _is_fog(xOffset, yOffset + 1) || _is_fog(xOffset + 1, yOffset):
+			elif _is_fog(x + 1, y + 1) || _is_fog(x, y + 1) || _is_fog(x + 1, y):
 				return Color(1, 1, 1, 1);
 		2:
-			if not _is_visible(xOffset - 1, yOffset - 1, false) && not _is_visible(xOffset, yOffset - 1, false) && not _is_visible(xOffset - 1, yOffset, false):
+			if not _is_visible(x - 1, y - 1, false) && not _is_visible(x, y - 1, false) && not _is_visible(x - 1, y, false):
 				return Color(0, 0, 0, 0);
-			elif _is_fog(xOffset - 1, yOffset - 1) || _is_fog(xOffset, yOffset - 1) || _is_fog(xOffset - 1, yOffset):
+			elif _is_fog(x - 1, y - 1) || _is_fog(x, y - 1) || _is_fog(x - 1, y):
 				return Color(1, 1, 1, 1);
 		3:
-			if not _is_visible(xOffset + 1, yOffset - 1, false) && not _is_visible(xOffset, yOffset - 1, false) && not _is_visible(xOffset + 1, yOffset, false):
+			if not _is_visible(x + 1, y - 1, false) && not _is_visible(x, y - 1, false) && not _is_visible(x + 1, y, false):
 				return Color(0, 0, 0, 0);
-			elif _is_fog(xOffset + 1, yOffset - 1) || _is_fog(xOffset, yOffset - 1) || _is_fog(xOffset + 1, yOffset):
+			elif _is_fog(x + 1, y - 1) || _is_fog(x, y - 1) || _is_fog(x + 1, y):
 				return Color(1, 1, 1, 1);
 	return Color(1, 1, 1, 0);
 
@@ -484,7 +479,7 @@ func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0, inve
 		st.add_color(_get_color(2, x, y));
 		st.add_uv(Vector2(0, 0))
 		st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
-	elif not _is_visible(x, y, false) && (_is_visible(x + 1, y + 1, false) || _is_visible(x - 1, y - 1, false)):
+	elif (not _is_visible(x, y, false) && (_is_visible(x + 1, y + 1, false) || _is_visible(x - 1, y - 1, false))) || _is_corner_left(x, y):
 		st.add_color(_get_color(0, x, y));
 		st.add_uv(Vector2(0, 1))
 		st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, z))
@@ -503,7 +498,10 @@ func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0, inve
 		
 		st.add_color(_get_color(2, x, y));
 		st.add_uv(Vector2(0, 0))
-		st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
+		if _is_corner_left(x, y):
+			st.add_vertex(Vector3(-0 + xOffset*2, -0 + yOffset*2, z))
+		else:
+			st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
 		
 		st.add_color(_get_color(0, x, y));
 		st.add_uv(Vector2(0, 1))
@@ -527,7 +525,10 @@ func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0, inve
 		
 		st.add_color(_get_color(3, x, y));
 		st.add_uv(Vector2(1, 0))
-		st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, z))
+		if _is_corner_right(x, y):
+			st.add_vertex(Vector3(0 + xOffset*2, -0 + yOffset*2, z))
+		else:
+			st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, z))
 		
 		st.add_color(_get_color(2, x, y));
 		st.add_uv(Vector2(0, 0))
