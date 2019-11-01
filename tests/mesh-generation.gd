@@ -116,14 +116,6 @@ func _add_check_chunk(x, y):
 	var chunk = Vector2(xCHUNK, yCHUNK)
 	if !check_chunks.has(chunk):
 		check_chunks.append(chunk);
-#	for xOff in range(-1, 2):
-#		for yOff in range(-1, 2):
-#			xCHUNK = floor(x + xOff / CHUNK_SIZE);
-#			yCHUNK = floor(y + yOff / CHUNK_SIZE);
-#			var chunk_neighbor = Vector2(xCHUNK, yCHUNK);
-#			print(xOff, yOff, chunk_neighbor, chunk)
-#			if chunk_neighbor != chunk && !check_chunks.has(chunk):
-#				check_chunks.append(chunk);
 
 const CHUNK_SIZE = 5;
 const CUBE_SIZE = 2;
@@ -250,7 +242,7 @@ func _on_StaticBody_input_event(camera, event, click_position, click_normal, sha
 			n.way_points = path;
 			print(camera, "\t", event, "\t", click_position, "\t", click_normal, "\t", shape_idx, "\t", data, "\n\tnavId: ", "from: ", fromPos, " to: ", toPos, " size: ", path.size())
 		elif event.button_index == 3 && event.button_mask == 0:
-			#print(click_position, click_normal)
+			print(click_position, click_normal)
 			if click_normal == Vector3(0, 0, 1):
 				var x = round(click_position.x / 2)
 				var y = round(click_position.y / 2)

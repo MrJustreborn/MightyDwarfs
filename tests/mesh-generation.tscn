@@ -85,6 +85,8 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 41.9186, 24.0484, -3.06924 )
 script = ExtResource( 6 )
 
 [node name="Area" type="Area" parent="VisibleBeacon"]
+visible = false
+collision_mask = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="VisibleBeacon/Area"]
 shape = SubResource( 6 )
