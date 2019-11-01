@@ -17,24 +17,24 @@ func _ready():
 	pass
 
 func _physics_process(delta):
-	if !WASD:
-		if Input.is_action_pressed("ui_right"):
-			move_and_slide(Vector3(1, 0, 0) * SPEED);
-		elif Input.is_action_pressed("ui_left"):
-			move_and_slide(Vector3(-1, 0, 0) * SPEED);
-		elif Input.is_action_pressed("ui_up"):
-			move_and_slide(Vector3(0, 1, 0) * SPEED);
-		elif Input.is_action_pressed("ui_down"):
-			move_and_slide(Vector3(0, -1, 0) * SPEED);
-	else:
-		if Input.is_key_pressed(KEY_D):
-			move_and_slide(Vector3(1, 0, 0) * SPEED);
-		elif Input.is_key_pressed(KEY_A):
-			move_and_slide(Vector3(-1, 0, 0) * SPEED);
-		elif Input.is_key_pressed(KEY_W):
-			move_and_slide(Vector3(0, 1, 0) * SPEED);
-		elif Input.is_key_pressed(KEY_S):
-			move_and_slide(Vector3(0, -1, 0) * SPEED);
+#	if !WASD:
+#		if Input.is_action_pressed("ui_right"):
+#			move_and_slide(Vector3(1, 0, 0) * SPEED);
+#		elif Input.is_action_pressed("ui_left"):
+#			move_and_slide(Vector3(-1, 0, 0) * SPEED);
+#		elif Input.is_action_pressed("ui_up"):
+#			move_and_slide(Vector3(0, 1, 0) * SPEED);
+#		elif Input.is_action_pressed("ui_down"):
+#			move_and_slide(Vector3(0, -1, 0) * SPEED);
+#	else:
+#		if Input.is_key_pressed(KEY_D):
+#			move_and_slide(Vector3(1, 0, 0) * SPEED);
+#		elif Input.is_key_pressed(KEY_A):
+#			move_and_slide(Vector3(-1, 0, 0) * SPEED);
+#		elif Input.is_key_pressed(KEY_W):
+#			move_and_slide(Vector3(0, 1, 0) * SPEED);
+#		elif Input.is_key_pressed(KEY_S):
+#			move_and_slide(Vector3(0, -1, 0) * SPEED);
 	
 	if way_points.size() > 0:
 		var dist = translation.distance_to(way_points[0]);

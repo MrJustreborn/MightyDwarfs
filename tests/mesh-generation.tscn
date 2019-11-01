@@ -1,12 +1,13 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://tests/mesh-generation.gd" type="Script" id=1]
 [ext_resource path="res://tests/testMesh2.tres" type="ArrayMesh" id=2]
 [ext_resource path="res://dwarfs/test.tscn" type="PackedScene" id=3]
 [ext_resource path="res://tests/caves/cave_1.tscn" type="PackedScene" id=4]
-[ext_resource path="res://tests/Grenzstein.gd" type="Script" id=5]
-[ext_resource path="res://tests/VisibleBeacon.gd" type="Script" id=6]
-[ext_resource path="res://tests/fog.tres" type="Material" id=7]
+[ext_resource path="res://tests/Camera.gd" type="Script" id=5]
+[ext_resource path="res://tests/Grenzstein.gd" type="Script" id=6]
+[ext_resource path="res://tests/VisibleBeacon.gd" type="Script" id=7]
+[ext_resource path="res://tests/fog.tres" type="Material" id=8]
 
 [sub_resource type="Environment" id=1]
 background_mode = 1
@@ -62,18 +63,19 @@ WASD = true
 [node name="caves" type="Spatial" parent="."]
 
 [node name="Spatial" parent="caves" instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 22, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 22, -1 )
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.988503, 0.151203, 0, -0.151203, 0.988503, 25.6613, 26.1868, 34.1888 )
 current = true
+script = ExtResource( 5 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
 
 [node name="Grenzstein" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.40431, 30.7184, 0 )
-script = ExtResource( 5 )
+script = ExtResource( 6 )
 
 [node name="MeshInstance" type="MeshInstance" parent="Grenzstein"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.53997 )
@@ -82,7 +84,7 @@ material/0 = null
 
 [node name="VisibleBeacon" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 41.9186, 24.0484, -3.06924 )
-script = ExtResource( 6 )
+script = ExtResource( 7 )
 
 [node name="Area" type="Area" parent="VisibleBeacon"]
 visible = false
@@ -105,6 +107,6 @@ material/0 = SubResource( 8 )
 transform = Transform( 10, 0, 0, 0, 18, 0, 0, 0, 10, 40.129, 30, -0.1 )
 visible = false
 mesh = SubResource( 9 )
-material/0 = ExtResource( 7 )
+material/0 = ExtResource( 8 )
 
 [node name="ImmediateGeometry" type="ImmediateGeometry" parent="."]
