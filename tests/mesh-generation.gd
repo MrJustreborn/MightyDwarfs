@@ -5,7 +5,9 @@ onready var chunks_cave = $Chunks/cave;
 onready var chunks_fog = $Chunks/fog;
 onready var chunks_fps = $Chunks/firstPerson;
 
-# [visbile, depth, type]
+const MAX_DAMAGE = 5;
+
+# [visbile, depth, type, damage]
 # dark=0
 # vis=1
 # fog=2
@@ -19,7 +21,7 @@ var dirty_chunks = []
 var check_chunks = []
 var first_flag = true;
 var discovered_flag = false;
-func update(x, y, radius_fog = 5, radius_hidden = 2, newDepth = 1):
+func update(x, y, radius_fog = 5, radius_hidden = 2, damage = 0):
 	# Make everything with fog
 	if first_flag:
 		first_flag = false;
@@ -33,7 +35,7 @@ func update(x, y, radius_fog = 5, radius_hidden = 2, newDepth = 1):
 	
 	_mark_visible(x, y, radius_fog, true);
 	_mark_visible(x, y, radius_hidden, false);
-	_update_depth(x, y, newDepth)
+	_update_depth(x, y, damage)
 
 func _mark_visible(x, y, radius, fogOnly):
 	for xOff in range(radius):
@@ -77,9 +79,13 @@ func _make_visible(x, y, fogOnly):
 				discovered_flag = true;
 			_add_check_chunk(x, y)
 
-func _update_depth(x, y, depth):
-	if terrain_next_frame[y][x][1] >= 0 && terrain_next_frame[y][x][1] < depth:
-		terrain_next_frame[y][x][1] = depth;
+func _update_depth(x, y, damage):
+	if terrain_next_frame[y][x][3] < damage && terrain_next_frame[y][x][3] <= MAX_DAMAGE:
+		terrain_next_frame[y][x][3] = damage;
+		_add_check_chunk(x, y)
+	elif terrain_next_frame[y][x][3] >= MAX_DAMAGE:
+		terrain_next_frame[y][x][1] = terrain_next_frame[y][x][1] + 1;
+		terrain_next_frame[y][x][3] = 0;
 		_add_check_chunk(x, y)
 
 func _add_check_chunk(x, y):
@@ -204,13 +210,31 @@ func _on_StaticBody_input_event(camera, event, click_position, click_normal, sha
 			get_tree().call_group("ACTIVE_SELECTION", "_remove_active");
 		elif event.button_index == 3 && event.button_mask == 0:
 			print(click_position, click_normal)
-			return; #Add ctrl
+			#return; #Add ctrl
 			if click_normal == Vector3(0, 0, 1):
 				var x = round(click_position.x / 2)
 				var y = round(click_position.y / 2)
 				print("here: ", Vector2(x, y), " terrain: ", terrain[y][x])
 				discovered_flag = true
-				update(x, y, 1, 1, 1)
+				update(x, y, 1, 1, terrain[y][x][3] + 1)
+				return;
+				var dwarfs = get_tree().get_nodes_in_group("DWARFS");
+				var toPos = navigation.get_closest_point(click_position);
+				var cellPos = navigation.get_point_position(toPos) / 2;
+				var length = Vector2(cellPos.x, cellPos.y) - Vector2(x,y); #Cell distance
+				
+				var curPath = [];
+				var found = null;
+				for d in dwarfs:
+					var fromPos = navigation.get_closest_point(d.translation);
+					var path = navigation.get_point_path(fromPos, toPos);
+					print(d.name, " - ", path.size())
+					if path.size() > 0 && (path.size() < curPath.size() || curPath.size() == 0):
+						curPath = path;
+						found = d;
+				if found && length.length() == 1:
+					found.target = Vector2(x, y)
+					found.way_points = curPath;
 
 #TODO: split caves/FPS and fog for faster calculation, it doesn't need to calc the caves if only fog is changed
 func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInverted = true) -> Array: #[mesh_cave, mesh_fog, mesh_inverted, shape_cave, shape_inverted]
@@ -405,32 +429,35 @@ func _is_corner_right(x, y, difference = 1) -> bool:
 #a = shadow
 func _get_color(corner: int, x = 0, y = 0) -> Color:
 	var type = terrain[y][x][2] / 255.0;
+	var damage = 0;
+	if terrain[y][x].size() >= 4:
+		damage = terrain[y][x][3] / 255.0;
 	if _is_visible(x, y, false) && _is_fog(x, y):
-		return Color(1, type, 1, 1);
+		return Color(1, type, damage, 1);
 	elif  _is_visible(x, y, false):
-		return Color(1, type, 1, 0);
+		return Color(1, type, damage, 0);
 	match(corner):
 		0: 
 			if not _is_visible(x - 1, y + 1, false) && not _is_visible(x, y + 1, false) && not _is_visible(x - 1, y, false):
-				return Color(0, type, 0, 0);
+				return Color(0, type, damage, 0);
 			elif _is_fog(x - 1, y + 1) || _is_fog(x, y + 1) || _is_fog(x - 1, y):
-				return Color(1, type, 1, 1);
+				return Color(1, type, damage, 1);
 		1: 
 			if not _is_visible(x + 1, y + 1, false) && not _is_visible(x, y + 1, false) && not _is_visible(x + 1, y, false):
-				return Color(0, type, 0, 0);
+				return Color(0, type, damage, 0);
 			elif _is_fog(x + 1, y + 1) || _is_fog(x, y + 1) || _is_fog(x + 1, y):
-				return Color(1, type, 1, 1);
+				return Color(1, type, damage, 1);
 		2:
 			if not _is_visible(x - 1, y - 1, false) && not _is_visible(x, y - 1, false) && not _is_visible(x - 1, y, false):
-				return Color(0, type, 0, 0);
+				return Color(0, type, damage, 0);
 			elif _is_fog(x - 1, y - 1) || _is_fog(x, y - 1) || _is_fog(x - 1, y):
-				return Color(1, type, 1, 1);
+				return Color(1, type, damage, 1);
 		3:
 			if not _is_visible(x + 1, y - 1, false) && not _is_visible(x, y - 1, false) && not _is_visible(x + 1, y, false):
-				return Color(0, type, 0, 0);
+				return Color(0, type, damage, 0);
 			elif _is_fog(x + 1, y - 1) || _is_fog(x, y - 1) || _is_fog(x + 1, y):
-				return Color(1, type, 1, 1);
-	return Color(1, type, 1, 0);
+				return Color(1, type, damage, 1);
+	return Color(1, type, damage, 0);
 
 func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0, inverted = false):
 	if inverted:

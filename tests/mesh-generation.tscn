@@ -16,18 +16,18 @@ fog_color = Color( 0.501961, 0.6, 0.701961, 0.415686 )
 fog_depth_end = 50.0
 tonemap_mode = 2
 
-[sub_resource type="PrismMesh" id=5]
+[sub_resource type="PrismMesh" id=2]
 size = Vector3( 1, 3, 0.5 )
 
-[sub_resource type="BoxShape" id=6]
+[sub_resource type="BoxShape" id=3]
 extents = Vector3( 4.84994, 3.03056, 3.05 )
 
-[sub_resource type="CubeMesh" id=7]
+[sub_resource type="CubeMesh" id=4]
 
-[sub_resource type="SpatialMaterial" id=8]
+[sub_resource type="SpatialMaterial" id=5]
 albedo_color = Color( 1, 0, 0, 1 )
 
-[sub_resource type="QuadMesh" id=9]
+[sub_resource type="QuadMesh" id=6]
 
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 1 )
@@ -68,6 +68,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 22, -1 )
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.988503, 0.151203, 0, -0.151203, 0.988503, 25.6613, 26.1868, 34.1888 )
 current = true
+fov = 35.0
 script = ExtResource( 5 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -79,7 +80,7 @@ script = ExtResource( 6 )
 
 [node name="MeshInstance" type="MeshInstance" parent="Grenzstein"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.53997 )
-mesh = SubResource( 5 )
+mesh = SubResource( 2 )
 material/0 = null
 
 [node name="VisibleBeacon" type="Spatial" parent="."]
@@ -91,22 +92,22 @@ visible = false
 collision_mask = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="VisibleBeacon/Area"]
-shape = SubResource( 6 )
+shape = SubResource( 3 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 3, 0, 0, 0, 1, 42.5553, 23.9815, -4.41744 )
-mesh = SubResource( 7 )
-material/0 = SubResource( 8 )
+mesh = SubResource( 4 )
+material/0 = SubResource( 5 )
 
 [node name="MeshInstance3" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 40.8605, 23.5691, -5.15823 )
-mesh = SubResource( 7 )
-material/0 = SubResource( 8 )
+mesh = SubResource( 4 )
+material/0 = SubResource( 5 )
 
 [node name="MeshInstance4" type="MeshInstance" parent="."]
 transform = Transform( 10, 0, 0, 0, 18, 0, 0, 0, 10, 40.129, 30, -0.1 )
 visible = false
-mesh = SubResource( 9 )
+mesh = SubResource( 6 )
 material/0 = ExtResource( 8 )
 
 [node name="ImmediateGeometry" type="ImmediateGeometry" parent="."]
