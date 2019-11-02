@@ -83,10 +83,12 @@ func _update_depth(x, y, damage):
 	if terrain_next_frame[y][x][3] < damage && terrain_next_frame[y][x][3] <= MAX_DAMAGE:
 		terrain_next_frame[y][x][3] = damage;
 		_add_check_chunk(x, y)
+		discovered_flag = true
 	elif terrain_next_frame[y][x][3] >= MAX_DAMAGE:
 		terrain_next_frame[y][x][1] = terrain_next_frame[y][x][1] + 1;
 		terrain_next_frame[y][x][3] = 0;
 		_add_check_chunk(x, y)
+		discovered_flag = true
 
 func _add_check_chunk(x, y):
 	var xCHUNK = floor(x / CHUNK_SIZE);
@@ -215,7 +217,6 @@ func _on_StaticBody_input_event(camera, event, click_position, click_normal, sha
 				var x = round(click_position.x / 2)
 				var y = round(click_position.y / 2)
 				print("here: ", Vector2(x, y), " terrain: ", terrain[y][x])
-				discovered_flag = true
 				update(x, y, 1, 1, terrain[y][x][3] + 1)
 				return;
 				var dwarfs = get_tree().get_nodes_in_group("DWARFS");
@@ -427,10 +428,10 @@ func _is_corner_right(x, y, difference = 1) -> bool:
 #g = type
 #b = abbau
 #a = shadow
-func _get_color(corner: int, x = 0, y = 0) -> Color:
+func _get_color(corner: int, x = 0, y = 0, flagWall = false) -> Color:
 	var type = terrain[y][x][2] / 255.0;
 	var damage = 0;
-	if terrain[y][x].size() >= 4:
+	if !flagWall:
 		damage = terrain[y][x][3] / 255.0;
 	if _is_visible(x, y, false) && _is_fog(x, y):
 		return Color(1, type, damage, 1);
@@ -572,102 +573,102 @@ func _passage(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
 		_passage_ceiling(st, x, y, z, xOffset, yOffset);
 
 func _passage_bottom(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
-	st.add_color(_get_color(2, x, y));
+	st.add_color(_get_color(2, x, y, true));
 	st.add_uv(Vector2(0, 1))
 	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
-	st.add_color(_get_color(2, x, y));
+	st.add_color(_get_color(2, x, y, true));
 	st.add_uv(Vector2(0, 0))
 	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(3, x, y));
+	st.add_color(_get_color(3, x, y, true));
 	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(3, x, y));
+	st.add_color(_get_color(3, x, y, true));
 	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(3, x, y));
+	st.add_color(_get_color(3, x, y, true));
 	st.add_uv(Vector2(1, 1))
 	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
-	st.add_color(_get_color(2, x, y));
+	st.add_color(_get_color(2, x, y, true));
 	st.add_uv(Vector2(0, 1))
 	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 
 func _passage_right(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
-	st.add_color(_get_color(3, x, y));
+	st.add_color(_get_color(3, x, y, true));
 	st.add_uv(Vector2(0, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
-	st.add_color(_get_color(3, x, y));
+	st.add_color(_get_color(3, x, y, true));
 	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(1, x, y));
+	st.add_color(_get_color(1, x, y, true));
 	st.add_uv(Vector2(1, 1))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(1, x, y));
+	st.add_color(_get_color(1, x, y, true));
 	st.add_uv(Vector2(1, 1))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(1, x, y));
+	st.add_color(_get_color(1, x, y, true));
 	st.add_uv(Vector2(0, 1))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
-	st.add_color(_get_color(3, x, y));
+	st.add_color(_get_color(3, x, y, true));
 	st.add_uv(Vector2(0, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, 0 + z))
 
 func _passage_left(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
-	st.add_color(_get_color(2, x, y));
+	st.add_color(_get_color(2, x, y, true));
 	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
-	st.add_color(_get_color(0, x, y));
+	st.add_color(_get_color(0, x, y, true));
 	st.add_uv(Vector2(0, 1))
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(2, x, y));
+	st.add_color(_get_color(2, x, y, true));
 	st.add_uv(Vector2(0, 0))
 	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(2, x, y));
+	st.add_color(_get_color(2, x, y, true));
 	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, 0 + z))
 	
-	st.add_color(_get_color(0, x, y));
+	st.add_color(_get_color(0, x, y, true));
 	st.add_uv(Vector2(1, 1))
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
-	st.add_color(_get_color(0, x, y));
+	st.add_color(_get_color(0, x, y, true));
 	st.add_uv(Vector2(0, 1))
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 
 func _passage_ceiling(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
-	st.add_color(_get_color(1, x, y));
+	st.add_color(_get_color(1, x, y, true));
 	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
-	st.add_color(_get_color(1, x, y));
+	st.add_color(_get_color(1, x, y, true));
 	st.add_uv(Vector2(1, 1))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(0, x, y));
+	st.add_color(_get_color(0, x, y, true));
 	st.add_uv(Vector2(0, 1))
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(0, x, y));
+	st.add_color(_get_color(0, x, y, true));
 	st.add_uv(Vector2(0, 1))
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, -2 + z))
 	
-	st.add_color(_get_color(0, x, y));
+	st.add_color(_get_color(0, x, y, true));
 	st.add_uv(Vector2(0, 0))
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, 0 + z))
 	
-	st.add_color(_get_color(1, x, y));
+	st.add_color(_get_color(1, x, y, true));
 	st.add_uv(Vector2(1, 0))
 	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, 0 + z))
 
