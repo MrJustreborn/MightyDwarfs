@@ -269,12 +269,7 @@ func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInv
 			if calcCave:
 				if terrain[yWorld][xWorld][1] != 0: # there is a way
 					_add_navigation_point(xWorld, yWorld);
-				if terrain[yWorld][xWorld][1] == 0:
-					_plane(st, xWorld, yWorld, 0, x, y);
-				elif terrain[yWorld][xWorld][1] >= 1:
-					_plane(st, xWorld, yWorld, -2 * terrain[yWorld][xWorld][1], x, y);
-					for i in range(terrain[yWorld][xWorld][1]):
-						_passage(st, xWorld, yWorld, -2 * i, x, y);
+				_cave(st, xWorld, yWorld, 0, x, y);
 	
 	#print(navigation.get_points().size());
 	
@@ -561,6 +556,14 @@ func _fog(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
 	if _is_fog(x, y) && !_is_fog(x, y - 1) && !_is_wall(x, y - 1):
 		for i in range(fogDepth):
 			_passage_ceiling(st, x, y, -2 * i, xOffset, yOffset - 1);
+
+func _cave(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
+	if terrain[y][x][1] == 0:
+		_plane(st, x, y, 0, xOffset, yOffset);
+	elif terrain[y][x][1] >= 1:
+		_plane(st, x, y, -2 * terrain[y][x][1], xOffset, yOffset);
+		for i in range(terrain[y][x][1]):
+			_passage(st, x, y, -2 * i, xOffset, yOffset);
 
 func _passage(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
 	if _is_wall(x, y - 1, -z/2):
