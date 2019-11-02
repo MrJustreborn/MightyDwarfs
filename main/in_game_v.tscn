@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://main/in_game.gd" type="Script" id=1]
+[ext_resource path="res://tests/mesh-generation.tscn" type="PackedScene" id=2]
+
+[node name="Node" type="Node"]
+script = ExtResource( 1 )
+
+[node name="Spatial" parent="." instance=ExtResource( 2 )]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 99
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
+anchor_right = 1.0
+margin_right = 16.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="CanvasLayer/HBoxContainer"]
+margin_right = 56.0
+margin_bottom = 14.0
+text = "asdfasdff"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -20.0
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="CanvasLayer/HBoxContainer2"]
+margin_right = 39.0
+margin_bottom = 20.0
+text = "Test"

@@ -16,7 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Mighty Dwarfs - Yggdrasil"
-run/main_scene="res://main/in_game.tscn"
+run/main_scene="res://main/in_game_v.tscn"
 config/icon="res://icon.png"
 
 [display]

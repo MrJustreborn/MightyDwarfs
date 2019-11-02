@@ -1,6 +1,6 @@
-extends Control
+extends Node
 
-onready var label = $HBoxContainer/Label
+onready var label = $CanvasLayer/HBoxContainer/Label
 
 func _ready():
 	pass
@@ -15,3 +15,9 @@ func _process(delta):
 	dwarfs = get_tree().get_nodes_in_group("ACTIVE_SELECTION")
 	for d in dwarfs:
 		label.text += d.name + ", ";
+
+
+func _on_Button_pressed():
+	get_tree().set_input_as_handled()
+	print("asdfasd")
+	pass # Replace with function body.
