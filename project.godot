@@ -16,7 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Mighty Dwarfs - Yggdrasil"
-run/main_scene="res://tests/mesh-generation.tscn"
+run/main_scene="res://main/in_game.tscn"
 config/icon="res://icon.png"
 
 [display]
@@ -24,6 +24,7 @@ config/icon="res://icon.png"
 window/size/width=1920
 window/size/height=1080
 window/size/borderless=true
+window/size/always_on_top=true
 
 [rendering]
 
