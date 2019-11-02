@@ -20,9 +20,6 @@ var check_chunks = []
 var first_flag = true;
 var discovered_flag = false;
 func update(x, y, radius_fog = 5, radius_hidden = 2, newDepth = 1):
-	#var xCHUNK = floor(x / CHUNK_SIZE);
-	#var yCHUNK = floor(y / CHUNK_SIZE);
-	
 	# Make everything with fog
 	if first_flag:
 		first_flag = false;
@@ -516,21 +513,24 @@ func _plane(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0, inve
 
 func _fog(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
 	_plane(st, x, y, z, xOffset, yOffset);
+	var fogDepth = terrain[y][x][1];
+	if fogDepth < 0:
+		fogDepth = 10; #TODO: how depth shoud it be?
 	# Right
 	if _is_fog(x, y) && !_is_fog(x + 1, y) && !_is_wall(x + 1, y):
-		for i in range(terrain[y][x][1]):
+		for i in range(fogDepth):
 			_passage_left(st, x, y, -2 * i, xOffset + 1, yOffset);
 	# Left
 	if _is_fog(x, y) && !_is_fog(x - 1, y) && !_is_wall(x - 1, y):
-		for i in range(terrain[y][x][1]):
+		for i in range(fogDepth):
 			_passage_right(st, x, y, -2 * i, xOffset - 1, yOffset);
 	# Top
 	if _is_fog(x, y) && !_is_fog(x, y + 1) && !_is_wall(x, y + 1):
-		for i in range(terrain[y][x][1]):
+		for i in range(fogDepth):
 			_passage_bottom(st, x, y, -2 * i, xOffset, yOffset + 1);
 	# Bottom
 	if _is_fog(x, y) && !_is_fog(x, y - 1) && !_is_wall(x, y - 1):
-		for i in range(terrain[y][x][1]):
+		for i in range(fogDepth):
 			_passage_ceiling(st, x, y, -2 * i, xOffset, yOffset - 1);
 
 func _passage(st: SurfaceTool, x = 0, y = 0, z = 0, xOffset = 0, yOffset = 0):
