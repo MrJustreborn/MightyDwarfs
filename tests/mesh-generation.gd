@@ -191,19 +191,20 @@ func add_mesh_to(x: int, y: int, node: Node, mesh: Mesh, shape: Shape = null):
 
 func _on_StaticBody_input_event(camera, event, click_position, click_normal, shape_idx, data):
 	if event is InputEventMouseButton:
-		if (event.button_index == 1 || event.button_index == 2) && event.button_mask == 0:
-			var n;
-			if event.button_index == 1:
-				n = $dwarfs/Left;
-			else:
-				n = $dwarfs/Right;
-			var toPos = navigation.get_closest_point(click_position);
-			var fromPos = navigation.get_closest_point(n.translation);
-			var path = navigation.get_point_path(fromPos, toPos);
-			n.way_points = path;
-			print(camera, "\t", event, "\t", click_position, "\t", click_normal, "\t", shape_idx, "\t", data, "\n\tnavId: ", "from: ", fromPos, " to: ", toPos, " size: ", path.size())
+		if event.button_index == 1 && event.button_mask == 0:
+			var dwarfs = get_tree().get_nodes_in_group("ACTIVE_SELECTION");
+			for d in dwarfs:
+				var toPos = navigation.get_closest_point(click_position);
+				var fromPos = navigation.get_closest_point(d.translation);
+				var path = navigation.get_point_path(fromPos, toPos);
+				d.way_points = path;
+				d._remove_active();
+				print(camera, "\t", event, "\t", click_position, "\t", click_normal, "\t", shape_idx, "\t", data, "\n\tnavId: ", "from: ", fromPos, " to: ", toPos, " size: ", path.size())
+		elif event.button_index == 2:
+			get_tree().call_group("ACTIVE_SELECTION", "_remove_active");
 		elif event.button_index == 3 && event.button_mask == 0:
 			print(click_position, click_normal)
+			return; #Add ctrl
 			if click_normal == Vector3(0, 0, 1):
 				var x = round(click_position.x / 2)
 				var y = round(click_position.y / 2)

@@ -6,15 +6,33 @@ export var WASD = false;
 
 var CTRL: Spatial
 
-var way_points: PoolVector3Array = [];
+var way_points: PoolVector3Array = [] setget set_way_points;
 
 func _ready():
 	#FIXME: setup ctrl
 	CTRL = get_parent().get_parent();
+	connect("input_event", self, "_on_input");
 	if WASD:
 		$MeshInstance2.material_override = $MeshInstance2.get_surface_material(0).duplicate()
 		$MeshInstance2.material_override.albedo_color = Color(1,0,0)
 	pass
+
+func _on_input(camera: Camera, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int):
+	if event is InputEventMouseButton:
+		if event.button_index == 1 && event.button_mask == 0:
+			if Input.is_key_pressed(KEY_SHIFT):
+				add_to_group("ACTIVE_SELECTION");
+			else:
+				get_tree().call_group("ACTIVE_SELECTION", "_remove_active");
+				add_to_group("ACTIVE_SELECTION");
+			updateLabel(last_cell);
+func _remove_active():
+	remove_from_group("ACTIVE_SELECTION");
+	updateLabel(last_cell);
+
+func set_way_points(points: PoolVector3Array):
+	print("Update way points in: ", name)
+	way_points = points;
 
 func _physics_process(delta):
 #	if !WASD:
@@ -68,7 +86,7 @@ func updateLabel(next: Vector2):
 	elif dir.y == 1:
 		dirText = "down"
 	#$Label.text = str(last_cell) +"\n"+ str(next) +"\n"+ str(dirText)
-	$Label.text = str(dirText) +"\n"+ "walk"
+	$Label.text = str(dirText) +"\n"+ "walk" + "\n" + str(is_in_group("ACTIVE_SELECTION"))
 
 
 var last_cell = Vector2();
