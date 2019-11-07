@@ -237,12 +237,13 @@ func _on_StaticBody_input_event(camera, event, click_position, click_normal, sha
 					found.target = Vector2(x, y)
 					found.way_points = curPath;
 	elif event is InputEventMouseMotion:
-		if click_normal.z == 1 && Input.is_mouse_button_pressed(BUTTON_LEFT):
+		if click_normal.z == 1:# && Input.is_mouse_button_pressed(BUTTON_LEFT):
 			var x = round(click_position.x / 2)
 			var y = round(click_position.y / 2)
 			#print(Vector2(x,y), terrain[y][x])
-			$info.translation.x = x * 2;
-			$info.translation.y = y * 2;
+			#$info.translation.x = x * 2;
+			#$info.translation.y = y * 2;
+			$info.mouse_cell_pos = Vector2(x, y)
 		pass
 
 #TODO: split caves/FPS and fog for faster calculation, it doesn't need to calc the caves if only fog is changed
