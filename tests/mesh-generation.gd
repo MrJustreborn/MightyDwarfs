@@ -21,13 +21,13 @@ var dirty_chunks = []
 var check_chunks = []
 var first_flag = true;
 var discovered_flag = false;
-func update(x, y, radius_fog = 5, radius_hidden = 2, damage = 0):
+func update(x: int, y: int, radius_fog = 5, radius_hidden = 2, damage = 0):
 	# Make everything with fog
 	if first_flag:
 		first_flag = false;
 		terrain_next_frame = terrain.duplicate(true);
-		for y in range(terrain_next_frame.size()):
-			for x in range(terrain_next_frame[0].size()):
+		for y in terrain_next_frame.keys():
+			for x in terrain_next_frame[y].keys():
 				if terrain_next_frame[y][x][0] == 1:
 					terrain_next_frame[y][x][0] = 2;
 					#new fog
@@ -80,11 +80,11 @@ func _make_visible(x, y, fogOnly):
 			_add_check_chunk(x, y)
 
 func _update_depth(x, y, damage):
-	if terrain_next_frame[y][x][3] < damage && terrain_next_frame[y][x][3] <= MAX_DAMAGE:
+	if _cell_exists(x, y) && terrain_next_frame[y][x][3] < damage && terrain_next_frame[y][x][3] <= MAX_DAMAGE:
 		terrain_next_frame[y][x][3] = damage;
 		_add_check_chunk(x, y)
 		discovered_flag = true
-	elif terrain_next_frame[y][x][3] >= MAX_DAMAGE:
+	elif _cell_exists(x, y) && terrain_next_frame[y][x][3] >= MAX_DAMAGE:
 		terrain_next_frame[y][x][1] = terrain_next_frame[y][x][1] + 1;
 		terrain_next_frame[y][x][3] = 0;
 		_add_check_chunk(x, y)
@@ -100,11 +100,22 @@ func _add_check_chunk(x, y):
 const CHUNK_SIZE = 5;
 const CUBE_SIZE = 2;
 func _ready():
-	var f = File.new()
-	f.open("res://maps/test.json", File.READ)
-	var res = JSON.parse(f.get_as_text()).result
+	#var f = File.new()
+	#f.open("res://maps/test.json", File.READ)
+	#var res = JSON.parse(f.get_as_text()).result
 	#print(res['terrain'])
-	terrain = res['terrain'].duplicate(true)
+	#terrain = res['terrain'].duplicate(true)
+	
+	var tmpTerrain = {};
+	for y in range(-5,5):
+		tmpTerrain[y] = {}
+		for x in range(-5,5):
+			if (x == 1 && y == 2) || (x == 2 && y == 2) || (x == 3 && y == 2):
+				tmpTerrain[y][x] = [0, 1, 0, 0]
+			else:
+				tmpTerrain[y][x] = [0, 0, 0, 0]
+			pass
+	terrain = tmpTerrain.duplicate(true)
 	_calculate_complete_mesh();
 
 func _process(delta):
@@ -118,7 +129,7 @@ func _process(delta):
 		terrain = terrain_next_frame.duplicate(true);
 		for chunk in dirty_chunks:
 			print("Dirty: ", chunk, " -> ", discovered_flag)
-			var _name = str(chunk.x) + "-" + str(chunk.y);
+			var _name = str(chunk.x) + "#" + str(chunk.y);
 			
 			var mICave = chunks_cave.get_node(_name);
 			var mIFog = chunks_fog.get_node(_name);
@@ -144,8 +155,8 @@ func _process(delta):
 func _is_dirty(chunk: Vector2):
 	for y in range(CHUNK_SIZE):
 		for x in range(CHUNK_SIZE):
-			var yWorld = y + chunk.y * CHUNK_SIZE;
-			var xWorld = x + chunk.x * CHUNK_SIZE;
+			var yWorld: int = y + chunk.y * CHUNK_SIZE;
+			var xWorld: int = x + chunk.x * CHUNK_SIZE;
 			if yWorld >= terrain.size() || xWorld >= terrain[yWorld].size():
 				continue
 			if terrain[yWorld][xWorld] != terrain_next_frame[yWorld][xWorld]:
@@ -156,7 +167,7 @@ func _is_dirty(chunk: Vector2):
 				for yOff in range(-1, 2):
 					if yWorld + yOff < 0 || xWorld + xOff < 0:
 						continue
-					if yWorld + yOff >= terrain.size() || xWorld + xOff >= terrain[yWorld + yOff].size():
+					if !_cell_exists(xWorld + xOff, yWorld + yOff):#yWorld + yOff >= terrain.size() || xWorld + xOff >= terrain[yWorld + yOff].size():
 						continue
 					if terrain[yWorld + yOff][xWorld + xOff] != terrain_next_frame[yWorld + yOff][xWorld + xOff]:
 						return true;
@@ -174,8 +185,8 @@ func _calculate_complete_mesh():
 		c.queue_free();
 	for c in chunks_fps.get_children():
 		c.queue_free();
-	for y in range(yS):
-		for x in range(xS):
+	for y in range(-1,1):# range(yS):
+		for x in range(-1,1): #range(xS):
 			print(x, " - ",y)
 			var data = _generate_mesh(x, y);
 			
@@ -188,7 +199,7 @@ func add_mesh_to(x: int, y: int, node: Node, mesh: Mesh, shape: Shape = null):
 	mI.mesh = mesh
 	mI.translate(Vector3(x * CHUNK_SIZE * CUBE_SIZE, y * CHUNK_SIZE * CUBE_SIZE, 0));
 	node.add_child(mI);
-	mI.name = str(x) + "-" + str(y);
+	mI.name = str(x) + "#" + str(y);
 	if shape:
 		var col = StaticBody.new();
 		var colShape = CollisionShape.new();
@@ -214,10 +225,10 @@ func _on_StaticBody_input_event(camera, event, click_position, click_normal, sha
 			print(click_position, click_normal)
 			#return; #Add ctrl
 			if click_normal == Vector3(0, 0, 1):
-				var x = round(click_position.x / 2)
-				var y = round(click_position.y / 2)
+				var x: int = round(click_position.x / 2)
+				var y: int = round(click_position.y / 2)
 				print("here: ", Vector2(x, y), " terrain: ", terrain[y][x])
-				update(x, y, 1, 1, terrain[y][x][3] + 1)
+				#update(x, y, 1, 1, terrain[y][x][3] + 1)
 				return;
 				var dwarfs = get_tree().get_nodes_in_group("DWARFS");
 				var toPos = navigation.get_closest_point(click_position);
@@ -247,7 +258,7 @@ func _on_StaticBody_input_event(camera, event, click_position, click_normal, sha
 		pass
 
 #TODO: split caves/FPS and fog for faster calculation, it doesn't need to calc the caves if only fog is changed
-func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInverted = true) -> Array: #[mesh_cave, mesh_fog, mesh_inverted, shape_cave, shape_inverted]
+func _generate_mesh(xOff: int = 0, yOff: int = 0, calcCave = true, calcFog = true, calcInverted = true) -> Array: #[mesh_cave, mesh_fog, mesh_inverted, shape_cave, shape_inverted]
 	var st: SurfaceTool = null;
 	if calcCave:
 		st = SurfaceTool.new();
@@ -267,7 +278,7 @@ func _generate_mesh(xOff = 0, yOff = 0, calcCave = true, calcFog = true, calcInv
 		for x in range(CHUNK_SIZE):#range(terrain[y].size()):
 			var yWorld = y + yOff * CHUNK_SIZE;
 			var xWorld = x + xOff * CHUNK_SIZE;
-			if yWorld >= terrain.size() || xWorld >= terrain[yWorld].size():
+			if !_cell_exists(xWorld, yWorld):#yWorld >= terrain.size() || xWorld >= terrain[yWorld].size():
 				continue
 			if calcInverted:
 				_plane(st3, xWorld, yWorld, 0, x, y, true); # Inverted - FirstPerson
@@ -362,19 +373,22 @@ func _connect_navigation_points_from(xWorld, yWorld, pID):
 		#	navigation.connect_points(pID, newId);
 
 func _cell_exists(x, y):
-	if y > terrain.size() - 1 || x > terrain[y].size() - 1:
-		return false;
-	elif y <= 0 || x <= 0:
-		return false;
-	return true;
+#	if y > terrain.size() - 1 || x > terrain[y].size() - 1:
+#		return false;
+#	elif y <= 0 || x <= 0:
+#		return false;
+#	return true;
+	return terrain.has(y) && terrain[y].has(x);
 
 func _is_visible(x, y, checkPassage = true) -> bool:
-	if y > terrain.size() - 1:
+	if !terrain.has(y) || !terrain[y].has(x):
 		return false;
-	elif x > terrain[y].size() - 1:
-		return false;
-	elif y <= 0 || x <= 0:
-		return false;
+#	if y > terrain.size() - 1:
+#		return false;
+#	elif x > terrain[0].size() - 1:
+#		return false;
+#	elif y <= 0 || x <= 0:
+#		return false;
 	elif !checkPassage && terrain[y][x][0] >= 1:
 		return true;
 	elif checkPassage && (terrain[y][x][0] >= 1 || terrain[y][x][1] >= 1):
@@ -382,23 +396,27 @@ func _is_visible(x, y, checkPassage = true) -> bool:
 	return false;
 
 func _is_fog(x, y) -> bool:
-	if y > terrain.size() - 1:
+	if !terrain.has(y) || !terrain[y].has(x):
 		return false;
-	elif x > terrain[y].size() - 1:
-		return false;
-	elif y <= 0 || x <= 0:
-		return false;
+#	if y > terrain.size() - 1:
+#		return false;
+#	elif x > terrain[0].size() - 1:
+#		return false;
+#	elif y <= 0 || x <= 0:
+#		return false;
 	elif terrain[y][x][0] == 2:
 		return true;
 	return false;
 
 func _is_wall(x, y, maxDepth = 0) -> bool:
-	if y > terrain.size() - 1:
+	if !terrain.has(y) || !terrain[y].has(x):
 		return true;
-	elif x > terrain[y].size() - 1:
-		return true;
-	elif y <= 0 || x <= 0:
-		return true;
+#	if y > terrain.size() - 1:
+#		return true;
+#	elif x > terrain[0].size() - 1:
+#		return true;
+#	elif y <= 0 || x <= 0:
+#		return true;
 	elif terrain[y][x][1] <= maxDepth && terrain[y][x][1] > 0: #TODO: this makes no sense
 		return true;
 	elif terrain[y][x][1] != 0:
@@ -428,10 +446,10 @@ func _is_corner_right(x, y, difference = 1) -> bool:
 # 2   3
 #
 
-#r = shadow
+#r = shadow		1=visible | 0=not visible
 #g = type
-#b = abbau
-#a = shadow
+#b = abbau		0=nothing | n=max_damage
+#a = fog		1=fog | 0=no fog
 func _get_color(corner: int, x = 0, y = 0, flagWall = false) -> Color:
 	var type = terrain[y][x][2] / 255.0;
 	var damage = 0;
@@ -441,6 +459,7 @@ func _get_color(corner: int, x = 0, y = 0, flagWall = false) -> Color:
 		return Color(1, type, damage, 1);
 	elif  _is_visible(x, y, false):
 		return Color(1, type, damage, 0);
+	return Color(1, type, damage, 1);
 	match(corner):
 		0: 
 			if not _is_visible(x - 1, y + 1, false) && not _is_visible(x, y + 1, false) && not _is_visible(x - 1, y, false):
