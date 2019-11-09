@@ -107,9 +107,9 @@ func _ready():
 	#terrain = res['terrain'].duplicate(true)
 	
 	var tmpTerrain = {};
-	for y in range(-5,5):
+	for y in range(-5, 15):
 		tmpTerrain[y] = {}
-		for x in range(-5,5):
+		for x in range(-5, 25):
 			if (x == 1 && y == 2) || (x == 2 && y == 2) || (x == 3 && y == 2):
 				tmpTerrain[y][x] = [0, 1, 0, 0]
 			else:
@@ -185,14 +185,33 @@ func _calculate_complete_mesh():
 		c.queue_free();
 	for c in chunks_fps.get_children():
 		c.queue_free();
-	for y in range(-1,1):# range(yS):
-		for x in range(-1,1): #range(xS):
-			print(x, " - ",y)
-			var data = _generate_mesh(x, y);
-			
-			add_mesh_to(x, y, chunks_cave, data[0], data[3]);
-			add_mesh_to(x, y, chunks_fog, data[1]);
-			add_mesh_to(x, y, chunks_fps, data[2], data[4]);
+	
+	var kY = terrain.keys()
+	kY.sort();
+	var chunks = []
+	for _y in kY:
+		var kX = terrain[_y].keys()
+		kX.sort();
+		for _x in kX:
+			var cX: int = ceil(_x / CHUNK_SIZE)
+			var cY: int = ceil(_y / CHUNK_SIZE)
+			var chunkToAdd = Vector2(cX, cY);
+			if !chunks.has(chunkToAdd):
+				#print(chunkToAdd)
+				chunks.append(chunkToAdd)
+	
+#	for y in range(-1,1):# range(yS):
+#		for x in range(-1,1): #range(xS):
+	for chunk in chunks:
+#			print(x, " - ",y)
+		print(chunk)
+		var x: int = chunk.x;
+		var y: int = chunk.y;
+		var data = _generate_mesh(x, y);
+		
+		add_mesh_to(x, y, chunks_cave, data[0], data[3]);
+		add_mesh_to(x, y, chunks_fog, data[1]);
+		add_mesh_to(x, y, chunks_fps, data[2], data[4]);
 
 func add_mesh_to(x: int, y: int, node: Node, mesh: Mesh, shape: Shape = null):
 	var mI = MeshInstance.new();
@@ -350,7 +369,7 @@ func _connect_navigation_points():
 		#ig.add_vertex(a);
 	ig.end();
 
-func _add_navigation_point(xWorld, yWorld):
+func _add_navigation_point(xWorld: int, yWorld: int):
 	if (terrain[yWorld][xWorld][1] > 1 || terrain[yWorld][xWorld][1] < 0) && !_is_wall(xWorld, yWorld - 1):
 		#print("cave")
 		return
@@ -361,7 +380,7 @@ func _add_navigation_point(xWorld, yWorld):
 	if pID == -1 || navigation.get_point_position(pID) != navPoint:
 		navigation.add_point(navigation.get_available_point_id(), navPoint);
 
-func _connect_navigation_points_from(xWorld, yWorld, pID):
+func _connect_navigation_points_from(xWorld: int, yWorld: int, pID):
 	if !_is_wall(xWorld, yWorld):
 		var navPoint = Vector3(xWorld * CUBE_SIZE, yWorld * CUBE_SIZE, -1);
 		var testpID = navigation.get_closest_point(navPoint);
