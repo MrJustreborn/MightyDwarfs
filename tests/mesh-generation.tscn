@@ -55,6 +55,7 @@ material/2 = null
 [node name="fog" type="Spatial" parent="Chunks"]
 
 [node name="firstPerson" type="Spatial" parent="Chunks"]
+visible = false
 
 [node name="dwarfs" type="Spatial" parent="."]
 
@@ -81,7 +82,7 @@ mesh = SubResource( 1 )
 material/0 = ExtResource( 6 )
 
 [node name="MeshInstance2" type="MeshInstance" parent="info"]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 2, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.0294837, 0 )
 mesh = SubResource( 1 )
 material/0 = ExtResource( 6 )
 

@@ -1,4 +1,5 @@
 shader_type spatial;
+render_mode depth_draw_always;
 
 uniform float amount = .025;
 uniform float speed = 5.0;
@@ -11,6 +12,10 @@ uniform float scale_x = 0.67;
 
 float rand(vec2 coord){
 	return fract(sin(dot(coord, vec2(12.9898, 78.233)))* 43758.5453123);
+}
+
+float rand2(vec2 coord){
+	return sin(dot(coord, vec2(1.0, 1.0)));
 }
 
 float noise(vec2 coord){
@@ -33,6 +38,8 @@ void vertex() {
 	float z = VERTEX.z + amount * cos(VERTEX.x * (UV.y + 1.0) * TIME * speed);
 	
 	//VERTEX = vec3(x, VERTEX.y, z);
+	//VERTEX.x = VERTEX.x + rand2(vec2(sin(TIME), VERTEX.z * 2.0)) * .020;
+	//VERTEX.z = VERTEX.z + rand2(vec2(cos(TIME), VERTEX.x * 2.0)) * .020;
 }
 
 void fragment(){
@@ -74,9 +81,10 @@ void fragment(){
 	color = mix(color, edge_tint, near_bottom);
 	
 	//Alhpa edge
+	/*
 	float edge_lower = 0.6;
 	float edge_upper = edge_lower + 0.1;
-	/*
+	
 	if(near_top > edge_lower){
 		color.a = 0.0;
 		
@@ -93,9 +101,8 @@ void fragment(){
 	}
 	*/
 	
-	
 	ALBEDO = color.rgb;
-	ALPHA = color.a;
+	//ALPHA = 0.5;//color.a;
 }
 
 

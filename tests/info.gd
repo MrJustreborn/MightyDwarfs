@@ -16,11 +16,11 @@ func set_mouse_pos(pos: Vector2):
 	if x % 2 == 0 && y % 2 == 0 && !start_pos:
 		$MeshInstance.translation.x = pos.x * 2;
 		$MeshInstance.translation.y = pos.y * 2;
-		$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
+	#	$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
 	elif x % 2 == 0 && y % 2 == 0 && (start_pos.x == x || start_pos.y == y):
 		$MeshInstance.translation.x = pos.x * 2;
 		$MeshInstance.translation.y = pos.y * 2;
-		$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
+	#	$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
 		if end_pos != pos:
 			end_pos = pos;
 			generate_mesh()
@@ -44,4 +44,64 @@ func generate_mesh():
 	var st = SurfaceTool.new();
 	st.begin(Mesh.PRIMITIVE_TRIANGLES);
 	
-	print(start_pos-end_pos)
+	var _test = start_pos - end_pos
+	var size = _test.length()
+	
+	if _test.x != 0:
+		print("X")
+		for s in range(size):
+			if _test.x < 0:
+				_plane(st, s)
+			else:
+				_plane(st, -s)
+	else:
+		print("Y")
+		for s in range(size):
+			if _test.y < 0:
+				_plane(st, 0, s)
+			else:
+				_plane(st, 0, -s)
+	
+	st.index();
+	st.generate_normals();
+	st.generate_tangents();
+	var mesh: ArrayMesh = st.commit();
+	mesh.surface_set_material(0, $MeshInstance.get_surface_material(0));
+	
+	$MeshInstance2.mesh = mesh;
+	$MeshInstance2.transform.origin = Vector3(start_pos.x * 2, start_pos.y * 2, 0)
+	
+	print(_test, size)
+
+
+func _plane(st, posX = 0, posY = 0):
+	var xOffset = posX;
+	var yOffset = posY;
+	var z = 0;
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, z))
+	
+	st.add_uv(Vector2(1, 1))
+	st.add_vertex(Vector3(1 + xOffset*2, 1 + yOffset*2, z))
+	
+	st.add_uv(Vector2(1, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, z))
+	
+	st.add_uv(Vector2(1, 0))
+	st.add_vertex(Vector3(1 + xOffset*2, -1 + yOffset*2, z))
+	
+	st.add_uv(Vector2(0, 0))
+	st.add_vertex(Vector3(-1 + xOffset*2, -1 + yOffset*2, z))
+	
+	st.add_uv(Vector2(0, 1))
+	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, z))
+
+
+
+
+
+
+
+
+
+

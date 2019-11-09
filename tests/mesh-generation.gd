@@ -110,7 +110,7 @@ func _ready():
 	for y in range(-5, 15):
 		tmpTerrain[y] = {}
 		for x in range(-5, 25):
-			if (x == 1 && y == 2) || (x == 2 && y == 2) || (x == 3 && y == 2):
+			if (x == 1 && y == 2) || (x == 2 && y == 2) || (x == 3 && y == 2) || (y == 2 && (x > 3 && x < 20)):
 				tmpTerrain[y][x] = [0, 1, 0, 0]
 			else:
 				tmpTerrain[y][x] = [0, 0, 0, 0]
@@ -478,7 +478,7 @@ func _get_color(corner: int, x = 0, y = 0, flagWall = false) -> Color:
 		return Color(1, type, damage, 1);
 	elif  _is_visible(x, y, false):
 		return Color(1, type, damage, 0);
-	return Color(1, type, damage, 1);
+	#return Color(1, type, damage, 1);
 	match(corner):
 		0: 
 			if not _is_visible(x - 1, y + 1, false) && not _is_visible(x, y + 1, false) && not _is_visible(x - 1, y, false):
