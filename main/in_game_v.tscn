@@ -29,7 +29,27 @@ anchor_bottom = 1.0
 margin_top = -20.0
 size_flags_horizontal = 3
 
-[node name="Button" type="Button" parent="CanvasLayer/HBoxContainer2"]
-margin_right = 39.0
+[node name="btn_none" type="Button" parent="CanvasLayer/HBoxContainer2"]
+margin_right = 46.0
 margin_bottom = 20.0
-text = "Test"
+text = "None"
+
+[node name="btn_tunnel" type="Button" parent="CanvasLayer/HBoxContainer2"]
+margin_left = 50.0
+margin_right = 105.0
+margin_bottom = 20.0
+text = "Tunnel"
+
+[node name="Button3" type="Button" parent="CanvasLayer/HBoxContainer2"]
+margin_left = 109.0
+margin_right = 173.0
+margin_bottom = 20.0
+text = "Höhle_1"
+
+[node name="Button4" type="Button" parent="CanvasLayer/HBoxContainer2"]
+margin_left = 177.0
+margin_right = 241.0
+margin_bottom = 20.0
+text = "Höhle_2"
+[connection signal="pressed" from="CanvasLayer/HBoxContainer2/btn_none" to="." method="_on_btn_none_pressed"]
+[connection signal="pressed" from="CanvasLayer/HBoxContainer2/btn_tunnel" to="." method="_on_btn_tunnel_pressed"]

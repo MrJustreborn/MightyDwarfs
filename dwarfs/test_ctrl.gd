@@ -1,3 +1,4 @@
+class_name Dwarf
 extends KinematicBody
 
 const SPEED = 5;
@@ -8,10 +9,12 @@ var CTRL: Spatial
 
 var way_points: PoolVector3Array = [] setget set_way_points;
 
+var target: Vector2;
+
 func _ready():
 	#FIXME: setup ctrl
 	CTRL = get_parent().get_parent();
-	connect("input_event", self, "_on_input");
+	connect("input_event", $"/root/in_game_state", "_on_dwarf_input_event", [self]);
 	if WASD:
 		$MeshInstance2.material_override = $MeshInstance2.get_surface_material(0).duplicate()
 		$MeshInstance2.material_override.albedo_color = Color(1,0,0)

@@ -1,5 +1,7 @@
 extends Node
 
+onready var state = $"/root/in_game_state";
+
 onready var label = $CanvasLayer/HBoxContainer/Label
 
 func _ready():
@@ -17,7 +19,11 @@ func _process(delta):
 		label.text += d.name + ", ";
 
 
-func _on_Button_pressed():
-	get_tree().set_input_as_handled()
-	print("asdfasd")
+func _on_btn_none_pressed() -> void:
+	state.request_new_state(state.STATE.NONE)
+	pass # Replace with function body.
+
+
+func _on_btn_tunnel_pressed() -> void:
+	state.request_new_state(state.STATE.BUILD)
 	pass # Replace with function body.

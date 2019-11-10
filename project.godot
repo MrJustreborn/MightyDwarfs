@@ -8,9 +8,20 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Reference",
+"class": "AbstractState",
+"language": "GDScript",
+"path": "res://states/abstract_state.gd"
+}, {
+"base": "KinematicBody",
+"class": "Dwarf",
+"language": "GDScript",
+"path": "res://dwarfs/test_ctrl.gd"
+} ]
 _global_script_class_icons={
-
+"AbstractState": "",
+"Dwarf": ""
 }
 
 [application]
@@ -18,6 +29,14 @@ _global_script_class_icons={
 config/name="Mighty Dwarfs - Yggdrasil"
 run/main_scene="res://main/in_game_v.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+in_game_state="*res://singleton/in_game_state.gd"
+
+[debug]
+
+gdscript/completion/autocomplete_setters_and_getters=true
 
 [display]
 

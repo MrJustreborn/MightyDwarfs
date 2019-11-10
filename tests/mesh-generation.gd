@@ -225,7 +225,7 @@ func add_mesh_to(x: int, y: int, node: Node, mesh: Mesh, shape: Shape = null):
 		colShape.shape = shape;
 		mI.add_child(col);
 		col.add_child(colShape);
-		col.connect("input_event", self, "_on_StaticBody_input_event", [Vector2(x, y)]);
+		col.connect("input_event", $"/root/in_game_state", "_on_map_input_event", [Vector2(x, y), navigation]);
 
 func _on_StaticBody_input_event(camera, event, click_position, click_normal, shape_idx, data):
 	if event is InputEventMouseButton:
