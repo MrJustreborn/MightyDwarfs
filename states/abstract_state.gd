@@ -1,10 +1,13 @@
 class_name AbstractState
 
+var name = "Abstract"
+var ctrl: Node;
+
 func setup_state() -> void:
-	print("setup state ...")
+	print("setup state ... ", name)
 
 func teardown_state() -> void:
-	print("teardown state ...")
+	print("teardown state ... ", name)
 
 func building_input_event(camera: Camera, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int, building: Node) -> void:
 	print("Nothing todo")

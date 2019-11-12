@@ -23,15 +23,14 @@ func _ready():
 	pass
 
 func _on_input(camera: Camera, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int):
-	state._on_dwarf_input_event(camera, event, click_position, click_normal, shape_idx, self);
-#	if event is InputEventMouseButton:
-#		if event.button_index == 1 && event.button_mask == 0:
-#			if Input.is_key_pressed(KEY_SHIFT):
-#				add_to_group("ACTIVE_SELECTION");
-#			else:
-#				get_tree().call_group("ACTIVE_SELECTION", "_remove_active");
-#				add_to_group("ACTIVE_SELECTION");
-#			updateLabel(last_cell);
+	if event is InputEventMouseButton:
+		if event.button_index == 1 && event.button_mask == 0:
+			if Input.is_key_pressed(KEY_SHIFT):
+				add_to_group("ACTIVE_SELECTION");
+			else:
+				get_tree().call_group("ACTIVE_SELECTION", "_remove_active");
+				add_to_group("ACTIVE_SELECTION");
+			updateLabel(last_cell);
 func _remove_active():
 	remove_from_group("ACTIVE_SELECTION");
 	updateLabel(last_cell);

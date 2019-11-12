@@ -1,3 +1,4 @@
+class_name InGameStateController
 extends Node
 
 signal state_changed(newState)
@@ -10,7 +11,8 @@ enum STATE {
 
 var CURRENT_STATE = STATE.BUILD;
 
-var STATE_NONE: AbstractState = preload("res://states/none_state.gd").new();
+var STATE_NONE: AbstractState = preload("res://states/none_state.gd").new(self);
+var STATE_SELECT_DWARF: AbstractState = preload("res://states/select_dwarf_state.gd").new(self);
 
 var state: AbstractState = load("res://states/abstract_state.gd").new();
 
@@ -29,6 +31,8 @@ func request_new_state(newState):
 		match(newState):
 			STATE.NONE:
 				state = STATE_NONE;
+			STATE.SELECT:
+				state = STATE_SELECT_DWARF;
 			_:
 				printerr("Unknown state!")
 				state.setup_state()

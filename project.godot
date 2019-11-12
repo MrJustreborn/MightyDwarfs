@@ -23,11 +23,17 @@ _global_script_classes=[ {
 "class": "GroupNames",
 "language": "GDScript",
 "path": "res://singleton/group_names.gd"
+}, {
+"base": "Node",
+"class": "InGameStateController",
+"language": "GDScript",
+"path": "res://singleton/in_game_state.gd"
 } ]
 _global_script_class_icons={
 "AbstractState": "",
 "Dwarf": "",
-"GroupNames": ""
+"GroupNames": "",
+"InGameStateController": ""
 }
 
 [application]
