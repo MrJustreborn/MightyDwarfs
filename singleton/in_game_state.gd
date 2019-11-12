@@ -31,7 +31,10 @@ func request_new_state(newState):
 				state = STATE_NONE;
 			_:
 				printerr("Unknown state!")
+				state.setup_state()
+				return
 		state.setup_state()
 		CURRENT_STATE = newState;
+		emit_signal("state_changed", CURRENT_STATE)
 	print(newState)
 	pass

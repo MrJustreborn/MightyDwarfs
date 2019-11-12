@@ -9,12 +9,12 @@ func _ready():
 
 
 func _process(delta):
-	var dwarfs = get_tree().get_nodes_in_group("DWARFS")
+	var dwarfs = get_tree().get_nodes_in_group(GroupNames.DWARFS)
 	label.text = "Dwarfs: ";
 	for d in dwarfs:
 		label.text += d.name + ", ";
 	label.text += "\nActive: ";
-	dwarfs = get_tree().get_nodes_in_group("ACTIVE_SELECTION")
+	dwarfs = get_tree().get_nodes_in_group(GroupNames.SELECTED_DWARFS)
 	for d in dwarfs:
 		label.text += d.name + ", ";
 

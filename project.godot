@@ -18,10 +18,16 @@ _global_script_classes=[ {
 "class": "Dwarf",
 "language": "GDScript",
 "path": "res://dwarfs/test_ctrl.gd"
+}, {
+"base": "Reference",
+"class": "GroupNames",
+"language": "GDScript",
+"path": "res://singleton/group_names.gd"
 } ]
 _global_script_class_icons={
 "AbstractState": "",
-"Dwarf": ""
+"Dwarf": "",
+"GroupNames": ""
 }
 
 [application]
