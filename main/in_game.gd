@@ -20,10 +20,10 @@ func _process(delta):
 
 
 func _on_btn_none_pressed() -> void:
-	state.request_new_state(state.STATE.NONE)
+	state.request_new_state(StateNames.NONE)
 	pass # Replace with function body.
 
 
 func _on_btn_tunnel_pressed() -> void:
-	state.request_new_state(state.STATE.BUILD)
+	state.request_new_state(StateNames.BUILD)
 	pass # Replace with function body.

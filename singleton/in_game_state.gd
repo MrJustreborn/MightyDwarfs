@@ -3,13 +3,8 @@ extends Node
 
 signal state_changed(newState)
 
-enum STATE {
-	NONE,
-	SELECT,
-	BUILD
-}
 
-var CURRENT_STATE = STATE.BUILD;
+var CURRENT_STATE = StateNames.DEFAULT;
 
 var STATE_NONE: AbstractState = preload("res://states/none_state.gd").new(self);
 var STATE_SELECT_DWARF: AbstractState = preload("res://states/select_dwarf_state.gd").new(self);
@@ -29,9 +24,9 @@ func request_new_state(newState):
 	if CURRENT_STATE != newState:
 		state.teardown_state();
 		match(newState):
-			STATE.NONE:
+			StateNames.NONE:
 				state = STATE_NONE;
-			STATE.SELECT:
+			StateNames.SELECT_DWARF:
 				state = STATE_SELECT_DWARF;
 			_:
 				printerr("Unknown state!")

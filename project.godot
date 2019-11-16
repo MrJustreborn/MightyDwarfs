@@ -28,12 +28,18 @@ _global_script_classes=[ {
 "class": "InGameStateController",
 "language": "GDScript",
 "path": "res://singleton/in_game_state.gd"
+}, {
+"base": "Reference",
+"class": "StateNames",
+"language": "GDScript",
+"path": "res://singleton/state_names.gd"
 } ]
 _global_script_class_icons={
 "AbstractState": "",
 "Dwarf": "",
 "GroupNames": "",
-"InGameStateController": ""
+"InGameStateController": "",
+"StateNames": ""
 }
 
 [application]
