@@ -10,6 +10,11 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Reference",
+"class": "AbstractJob",
+"language": "GDScript",
+"path": "res://jobs/abstract_job.gd"
+}, {
+"base": "Reference",
 "class": "AbstractState",
 "language": "GDScript",
 "path": "res://states/abstract_state.gd"
@@ -24,21 +29,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://singleton/group_names.gd"
 }, {
-"base": "Node",
-"class": "InGameStateController",
-"language": "GDScript",
-"path": "res://singleton/in_game_state.gd"
-}, {
 "base": "Reference",
 "class": "StateNames",
 "language": "GDScript",
 "path": "res://singleton/state_names.gd"
 } ]
 _global_script_class_icons={
+"AbstractJob": "",
 "AbstractState": "",
 "Dwarf": "",
 "GroupNames": "",
-"InGameStateController": "",
 "StateNames": ""
 }
 
@@ -51,6 +51,7 @@ config/icon="res://icon.png"
 [autoload]
 
 in_game_state="*res://singleton/in_game_state.gd"
+in_game_jobs="*res://singleton/in_game_jobs.gd"
 
 [debug]
 

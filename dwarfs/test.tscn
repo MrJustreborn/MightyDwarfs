@@ -47,6 +47,4 @@ margin_top = -540.0
 margin_right = -920.0
 margin_bottom = -526.0
 text = "TEST"
-align = 1
-valign = 1
 uppercase = true

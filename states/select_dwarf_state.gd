@@ -23,4 +23,13 @@ func dwarf_input_event(camera: Camera, event: InputEvent, click_position: Vector
 				dwarf.add_to_group(GroupNames.SELECTED_DWARFS);
 
 func map_input_event(camera: Camera, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int, chunk: Vector2, navigation: AStar):
-	print(camera, "\t", event, "\t", position, "\n\t", normal, "\t", shape_idx, "\t", chunk, "\t", navigation)
+	#print(camera, "\t", event, "\t", position, "\n\t", normal, "\t", shape_idx, "\t", chunk, "\t", navigation)
+	if event is InputEventMouseButton:
+		if event.button_index == 2 && event.button_mask == 0:
+			var dwarfs = ctrl.get_tree().get_nodes_in_group(GroupNames.SELECTED_DWARFS)
+			for d in dwarfs:
+				var job: AbstractJob = preload("res://jobs/walk_job.gd").new(navigation, position);
+				job.personal = true;
+				job.owner = d;
+				ctrl.get_job_system().submit_jobs([job], job.owner);
+			ctrl.request_new_state(StateNames.NONE);
