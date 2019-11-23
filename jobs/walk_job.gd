@@ -38,7 +38,7 @@ func physics_process(delta: float):
 		var dist = owner.translation.distance_to(way_points[0]);
 		var dir = owner.translation.direction_to(way_points[0]);
 		#print(way_points[0], " ", translation, " ", dist, " ", dir, " -> ", way_points.size())
-		if dist >= 0.25:
+		if dist >= 0.025:
 			owner.move_and_slide(dir * owner.SPEED);
 		else:
 			way_points.remove(0);

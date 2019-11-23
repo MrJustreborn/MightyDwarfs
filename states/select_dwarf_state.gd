@@ -22,7 +22,7 @@ func dwarf_input_event(camera: Camera, event: InputEvent, click_position: Vector
 				ctrl.get_tree().call_group(GroupNames.SELECTED_DWARFS, "remove_from_group", GroupNames.SELECTED_DWARFS);
 				dwarf.add_to_group(GroupNames.SELECTED_DWARFS);
 
-func map_input_event(camera: Camera, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int, chunk: Vector2, navigation: AStar):
+func map_input_event(camera: Camera, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int, chunk: Vector2, navigation: AStar, info: Node):
 	#print(camera, "\t", event, "\t", position, "\n\t", normal, "\t", shape_idx, "\t", chunk, "\t", navigation)
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_RIGHT && event.button_mask == BUTTON_MASK_RIGHT:

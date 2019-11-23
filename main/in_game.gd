@@ -25,5 +25,5 @@ func _on_btn_none_pressed() -> void:
 
 
 func _on_btn_tunnel_pressed() -> void:
-	state.request_new_state(StateNames.BUILD)
+	state.request_new_state(StateNames.BUILD_TUNNEL)
 	pass # Replace with function body.

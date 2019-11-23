@@ -17,6 +17,6 @@ func dwarf_input_event(camera: Camera, event: InputEvent, click_position: Vector
 			dwarf.add_to_group(GroupNames.SELECTED_DWARFS);
 			ctrl.request_new_state(StateNames.SELECT_DWARF);
 
-func map_input_event(camera: Camera, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int, chunk: Vector2, navigation: AStar):
+func map_input_event(camera: Camera, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int, chunk: Vector2, navigation: AStar, info: Node):
 	#print(camera, "\t", event, "\t", position, "\n\t", normal, "\t", shape_idx, "\t", chunk, "\t", navigation)
 	pass

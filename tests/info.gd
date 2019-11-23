@@ -6,9 +6,14 @@ var start_pos = null
 var end_pos = null
 
 func _ready():
-	pass
+	$"/root/in_game_state".connect("state_changed", self, "_on_state_changed")
+
+func _on_state_changed(newState):
+	$MeshInstance.visible = newState == StateNames.BUILD_TUNNEL
 
 func set_mouse_pos(pos: Vector2):
+	if $"/root/in_game_state".CURRENT_STATE != StateNames.BUILD_TUNNEL:
+		return
 	mouse_cell_pos = pos;
 	var x = int(pos.x)
 	var y = int(pos.y)
@@ -16,11 +21,11 @@ func set_mouse_pos(pos: Vector2):
 	if x % 2 == 0 && y % 2 == 0 && !start_pos:
 		$MeshInstance.translation.x = pos.x * 2;
 		$MeshInstance.translation.y = pos.y * 2;
-	#	$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
+#		$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
 	elif x % 2 == 0 && y % 2 == 0 && (start_pos.x == x || start_pos.y == y):
 		$MeshInstance.translation.x = pos.x * 2;
 		$MeshInstance.translation.y = pos.y * 2;
-	#	$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
+#		$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
 		if end_pos != pos:
 			end_pos = pos;
 			generate_mesh()
