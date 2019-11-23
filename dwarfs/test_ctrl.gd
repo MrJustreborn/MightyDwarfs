@@ -51,6 +51,9 @@ func _physics_process(delta):
 #			updateLabel(next_cell)
 #		else:
 #			updateLabel(last_cell)
+	if jobs.size() > 0:
+		var job: AbstractJob = jobs[0];
+		job.physics_process(delta);
 	pass
 
 func _process(delta):
@@ -60,6 +63,7 @@ func _process(delta):
 	$Label.text = str(jobs.size());
 	if jobs.size() > 0:
 		var job: AbstractJob = jobs[0];
+		job.process(delta);
 		$Label.text += "\n" + job.title();
 		$Label.text += "\n" + str(job.finished());
 		if job.finished():
