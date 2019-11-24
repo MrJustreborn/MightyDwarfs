@@ -9,7 +9,7 @@ func _ready():
 	$"/root/in_game_state".connect("state_changed", self, "_on_state_changed")
 
 func _on_state_changed(newState):
-	$MeshInstance.visible = newState == StateNames.BUILD_TUNNEL
+	$mouse_preview.visible = newState == StateNames.BUILD_TUNNEL
 
 func set_mouse_pos(pos: Vector2):
 	if $"/root/in_game_state".CURRENT_STATE != StateNames.BUILD_TUNNEL:
@@ -19,16 +19,16 @@ func set_mouse_pos(pos: Vector2):
 	var y = int(pos.y)
 	
 	if x % 2 == 0 && y % 2 == 0 && !start_pos:
-		$MeshInstance.translation.x = pos.x * 2;
-		$MeshInstance.translation.y = pos.y * 2;
+		$mouse_preview.translation.x = pos.x * 2;
+		$mouse_preview.translation.y = pos.y * 2;
 #		$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
-	elif x % 2 == 0 && y % 2 == 0 && (start_pos.x == x || start_pos.y == y):
-		$MeshInstance.translation.x = pos.x * 2;
-		$MeshInstance.translation.y = pos.y * 2;
+	elif start_pos:#elif x % 2 == 0 && y % 2 == 0 && (start_pos.x == x || start_pos.y == y):
+		$mouse_preview.translation.x = pos.x * 2;
+		$mouse_preview.translation.y = pos.y * 2;
 #		$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
-		if end_pos != pos:
-			end_pos = pos;
-			generate_mesh()
+	if start_pos && end_pos != pos:
+		end_pos = pos;
+		generate_mesh()
 	
 	if Input.is_mouse_button_pressed(BUTTON_LEFT) && !start_pos:
 		#print("HERE ", pos)
@@ -52,16 +52,16 @@ func generate_mesh():
 	var _test = start_pos - end_pos
 	var size = _test.length()
 	
-	if _test.x != 0:
+	if _test.x != 0 && _test.y == 0:
 		print("X")
-		for s in range(size):
+		for s in range(size + 1):
 			if _test.x < 0:
 				_plane(st, s)
 			else:
 				_plane(st, -s)
-	else:
+	elif _test.y != 0 && _test.x == 0:
 		print("Y")
-		for s in range(size):
+		for s in range(size + 1):
 			if _test.y < 0:
 				_plane(st, 0, s)
 			else:
@@ -71,7 +71,7 @@ func generate_mesh():
 	st.generate_normals();
 	st.generate_tangents();
 	var mesh: ArrayMesh = st.commit();
-	mesh.surface_set_material(0, $MeshInstance.get_surface_material(0));
+	mesh.surface_set_material(0, $mouse_preview.get_surface_material(0));
 	
 	$MeshInstance2.mesh = mesh;
 	$MeshInstance2.transform.origin = Vector3(start_pos.x * 2, start_pos.y * 2, 0)

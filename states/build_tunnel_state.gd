@@ -2,7 +2,7 @@ extends AbstractState
 
 func _init(_ctrl) -> void:
 	ctrl = _ctrl;
-	name = "None"
+	name = "Build Tunnel"
 
 func setup_state() -> void:
 	.setup_state()
