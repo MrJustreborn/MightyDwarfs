@@ -14,6 +14,12 @@ func _set_owner(newOwner: Node):
 func _setup_new_owner() -> void:
 	pass
 
+func get_job_name() -> String:
+	return "";
+
+func equals(other: AbstractJob) -> bool:
+	return false
+
 func icon():# -> Texture:
 	pass
 

@@ -4,6 +4,8 @@ var mouse_cell_pos: Vector2 setget set_mouse_pos;
 
 var start_pos = null
 var end_pos = null
+var lastPoints = []
+var curPoints = []
 
 func _ready():
 	$"/root/in_game_state".connect("state_changed", self, "_on_state_changed")
@@ -28,6 +30,7 @@ func set_mouse_pos(pos: Vector2):
 #		$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
 	if start_pos && end_pos != pos:
 		end_pos = pos;
+		curPoints.append(Vector2(x, y))
 		generate_mesh()
 	
 	if Input.is_mouse_button_pressed(BUTTON_LEFT) && !start_pos:
@@ -35,8 +38,14 @@ func set_mouse_pos(pos: Vector2):
 		start_pos = pos
 	elif !Input.is_mouse_button_pressed(BUTTON_LEFT) && start_pos:
 		#print("COMPLETE:", start_pos, end_pos)
+		lastPoints = curPoints.duplicate(true);
+		curPoints = [];
 		start_pos = null;
 		end_pos = null;
+		print(lastPoints)
+
+func get_last_points() -> Array:
+	return lastPoints.duplicate(true);
 
 func get_color(x, y):
 	if get_parent()._is_wall(x, y):

@@ -30,6 +30,11 @@ _global_script_classes=[ {
 "path": "res://singleton/group_names.gd"
 }, {
 "base": "Reference",
+"class": "JobNames",
+"language": "GDScript",
+"path": "res://singleton/job_names.gd"
+}, {
+"base": "Reference",
 "class": "StateNames",
 "language": "GDScript",
 "path": "res://singleton/state_names.gd"
@@ -39,6 +44,7 @@ _global_script_class_icons={
 "AbstractState": "",
 "Dwarf": "",
 "GroupNames": "",
+"JobNames": "",
 "StateNames": ""
 }
 

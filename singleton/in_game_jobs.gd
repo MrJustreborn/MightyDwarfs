@@ -1,5 +1,7 @@
 extends Node
 
+signal job_added(new_job)
+
 var jobs = []
 
 func _ready():
@@ -17,8 +19,20 @@ func submit_jobs(job: Array, to_instance: Node = null):
 		for j in jobs:
 			if !j.personal:
 				j.owner = null;
-				jobs.append(j);
+				_add_job(j);
+				emit_signal("job_added", j);
 	print("Current jobs pending: ", jobs)
+
+func _add_job(job):
+	for j in jobs:
+		var _j: AbstractJob = j;
+		if _j.equals(job):
+			return;
+	jobs.append(job)
+	print("new job added: ", job)
+
+func get_copy_of_all_jobs():
+	return jobs.duplicate(true);
 
 func _get_job_titles_printable(jobs: Array):
 	var string = "";

@@ -30,6 +30,9 @@ func calc_way_points() -> Array:
 	
 	return path;
 
+func get_job_name() -> String:
+	return JobNames.WALK;
+
 func process(delta: float):
 	pass
 
