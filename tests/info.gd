@@ -41,7 +41,6 @@ func set_mouse_pos(pos: Vector2):
 	if start_pos && end_pos != pos:
 		end_pos = pos;
 		# prevent diagonal
-		curPoints.append(Vector2(x, y))
 		generate_mesh()
 	
 	if Input.is_mouse_button_pressed(BUTTON_LEFT) && !start_pos:
@@ -67,6 +66,7 @@ func get_color(x, y):
 
 func generate_mesh():
 	print("Update info mesh")
+	curPoints = [];
 	
 	var st = SurfaceTool.new();
 	st.begin(Mesh.PRIMITIVE_TRIANGLES);
@@ -79,15 +79,19 @@ func generate_mesh():
 		for s in range(size + 1):
 			if _test.x < 0:
 				_plane(st, s)
+				curPoints.append(start_pos + Vector2(s, 0))
 			else:
 				_plane(st, -s)
+				curPoints.append(start_pos + Vector2(-s, 0))
 	elif _test.y != 0 && _test.x == 0:
 		print("Y")
 		for s in range(size + 1):
 			if _test.y < 0:
 				_plane(st, 0, s)
+				curPoints.append(start_pos + Vector2(0, s))
 			else:
 				_plane(st, 0, -s)
+				curPoints.append(start_pos + Vector2(0, -s))
 	
 	st.index();
 	st.generate_normals();
