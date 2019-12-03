@@ -1,8 +1,9 @@
 extends AbstractJob
 
+var position: Vector2;
 
 func _init(pos: Vector2):
-	pass
+	position = pos
 
 func _setup_new_owner() -> void:
 	pass
@@ -11,7 +12,7 @@ func get_job_name() -> String:
 	return JobNames.BUILD_TUNNEL;
 
 func equals(other: AbstractJob) -> bool:
-	return false;
+	return other.get_job_name() == get_job_name() && other.position == position
 
 func icon():# -> Texture:
 	pass

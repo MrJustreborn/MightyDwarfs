@@ -9,9 +9,19 @@ var curPoints = []
 
 func _ready():
 	$"/root/in_game_state".connect("state_changed", self, "_on_state_changed")
+	$"/root/in_game_jobs".connect("job_added", self, "_on_job_added");
 
 func _on_state_changed(newState):
 	$mouse_preview.visible = newState == StateNames.BUILD_TUNNEL
+
+func _on_job_added(newJob: AbstractJob):
+	if newJob.get_job_name() == JobNames.BUILD_TUNNEL:
+		var jobs = $"/root/in_game_jobs".get_copy_of_all_jobs();
+		var positions = []
+		for j in jobs:
+			if j.get_job_name() == JobNames.BUILD_TUNNEL:
+				positions.append(j.position);
+		generate_ui_mesh(positions);
 
 func set_mouse_pos(pos: Vector2):
 	if $"/root/in_game_state".CURRENT_STATE != StateNames.BUILD_TUNNEL:
@@ -30,11 +40,13 @@ func set_mouse_pos(pos: Vector2):
 #		$MeshInstance.get_surface_material(0).set_shader_param("blue_tint", get_color(x, y))
 	if start_pos && end_pos != pos:
 		end_pos = pos;
+		# prevent diagonal
 		curPoints.append(Vector2(x, y))
 		generate_mesh()
 	
 	if Input.is_mouse_button_pressed(BUTTON_LEFT) && !start_pos:
 		#print("HERE ", pos)
+		$mouse_draw_preview.visible = true;
 		start_pos = pos
 	elif !Input.is_mouse_button_pressed(BUTTON_LEFT) && start_pos:
 		#print("COMPLETE:", start_pos, end_pos)
@@ -43,6 +55,7 @@ func set_mouse_pos(pos: Vector2):
 		start_pos = null;
 		end_pos = null;
 		print(lastPoints)
+		$mouse_draw_preview.visible = false;
 
 func get_last_points() -> Array:
 	return lastPoints.duplicate(true);
@@ -82,11 +95,28 @@ func generate_mesh():
 	var mesh: ArrayMesh = st.commit();
 	mesh.surface_set_material(0, $mouse_preview.get_surface_material(0));
 	
-	$MeshInstance2.mesh = mesh;
-	$MeshInstance2.transform.origin = Vector3(start_pos.x * 2, start_pos.y * 2, 0)
+	$mouse_draw_preview.mesh = mesh;
+	$mouse_draw_preview.transform.origin = Vector3(start_pos.x * 2, start_pos.y * 2, 0)
 	
 	print(_test, size)
 
+func generate_ui_mesh(positions: Array):
+	print("Generate new UI mesh", positions)
+	
+	var st = SurfaceTool.new();
+	st.begin(Mesh.PRIMITIVE_TRIANGLES);
+	
+	for p in positions:
+		print(p)
+		_plane(st, p.x, p.y);
+	
+	st.index();
+	st.generate_normals();
+	st.generate_tangents();
+	var mesh: ArrayMesh = st.commit();
+	mesh.surface_set_material(0, $mouse_preview.get_surface_material(0));
+	
+	$MeshInstance3.mesh = mesh;
 
 func _plane(st, posX = 0, posY = 0):
 	var xOffset = posX;

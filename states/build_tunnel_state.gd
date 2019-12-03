@@ -23,4 +23,10 @@ func map_input_event(camera: Camera, event: InputEvent, position: Vector3, norma
 		last_pts = pts;
 		if !Input.is_mouse_button_pressed(BUTTON_LEFT) && pts && pts.size() > 0:
 			print("New build tunnel jobs to add: ", pts)
+			var jobs = []
+			for p in pts:
+				var job: AbstractJob = preload("res://jobs/build_tunnel_job.gd").new(p);
+				jobs.append(job);
+			
+			ctrl.get_job_system().submit_jobs(jobs);
 	pass
