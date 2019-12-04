@@ -91,11 +91,12 @@ material/0 = ExtResource( 6 )
 
 [node name="jobs" type="Spatial" parent="info"]
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.988503, 0.151203, 0, -0.151203, 0.988503, 19.3423, 20.4583, 58.4862 )
-current = true
-fov = 35.0
+[node name="Camera" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 script = ExtResource( 7 )
+
+[node name="Camera" type="Camera" parent="Camera"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.926 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 2 )

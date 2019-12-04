@@ -1,4 +1,4 @@
-extends Camera
+extends Spatial
 
 const ray_length = 1000
 
@@ -17,15 +17,28 @@ func _input(event: InputEvent):
 #			else:
 #				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		elif event.button_index == BUTTON_WHEEL_UP:
-			if translation.z > 10:
-				translate(Vector3(0, 0, -1))
+			if $Camera.translation.z > 10:
+				$Camera.translate(Vector3(0, 0, -1))
 		elif event.button_index == BUTTON_WHEEL_DOWN:
-			if translation.z < 50:
-				translate(Vector3(0, 0, 1))
+			if $Camera.translation.z < 500:
+				$Camera.translate(Vector3(0, 0, 1))
 	elif event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(BUTTON_MASK_RIGHT):
-			rotate_y(deg2rad(-event.relative.x / 10.0));
-			rotate_x(deg2rad(-event.relative.y / 10.0));
+			print(rotation_degrees)
+			if rotation_degrees.y >= -70 && rotation_degrees.y <= 70:
+				rotate_y(deg2rad(-event.relative.x / 10.0));
+			elif rotation_degrees.y <= -70:
+				rotation_degrees.y = -70;
+			elif rotation_degrees.y >= 70:
+				rotation_degrees.y = 70
+			
+			if rotation_degrees.x >= -30 && rotation_degrees.x <= 30:
+				rotate_x(deg2rad(-event.relative.y / 10.0));
+			elif rotation_degrees.x <= -30:
+				rotation_degrees.x = -30;
+			elif rotation_degrees.x >= 30:
+				rotation_degrees.x = 30
+			
 			rotation_degrees.z = 0;
 
 func _physics_process(delta):
@@ -44,10 +57,10 @@ func _physics_process(delta):
 func _process(delta):
 	var speed = 0.2;
 	if Input.is_action_pressed("ui_left"):
-		translate(Vector3(-1, 0, 0) * speed)
+		global_translate(Vector3(-1, 0, 0) * speed)
 	elif Input.is_action_pressed("ui_right"):
-		translate(Vector3(1, 0, 0) * speed)
+		global_translate(Vector3(1, 0, 0) * speed)
 	elif Input.is_action_pressed("ui_up"):
-		translate(Vector3(0, 1, 0) * speed)
+		global_translate(Vector3(0, 1, 0) * speed)
 	elif Input.is_action_pressed("ui_down"):
-		translate(Vector3(0, -1, 0) * speed)
+		global_translate(Vector3(0, -1, 0) * speed)
