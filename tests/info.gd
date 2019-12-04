@@ -43,7 +43,7 @@ func set_mouse_pos(pos: Vector2):
 		# prevent diagonal
 		generate_mesh()
 	
-	if Input.is_mouse_button_pressed(BUTTON_LEFT) && !start_pos:
+	if Input.is_mouse_button_pressed(BUTTON_LEFT) && !start_pos && x % 2 == 0 && y % 2 == 0:
 		#print("HERE ", pos)
 		$mouse_draw_preview.visible = true;
 		start_pos = pos
@@ -72,6 +72,11 @@ func generate_mesh():
 	st.begin(Mesh.PRIMITIVE_TRIANGLES);
 	
 	var _test = start_pos - end_pos
+	if abs(_test.x) > abs(_test.y):
+		_test.y = 0;
+	else:
+		_test.x = 0;
+	
 	var size = _test.length()
 	
 	if _test.x != 0 && _test.y == 0:
