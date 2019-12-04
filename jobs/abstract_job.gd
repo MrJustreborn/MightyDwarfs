@@ -17,6 +17,9 @@ func _setup_new_owner() -> void:
 func get_cell_pos() -> Vector2:
 	return Vector2();
 
+func is_reachable_from_cell(cell: Vector2) -> bool:
+	return false;
+
 func get_job_name() -> String:
 	return "";
 

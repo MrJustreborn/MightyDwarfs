@@ -65,15 +65,17 @@ func _process(delta):
 	if jobs.size() > 0:
 		var job: AbstractJob = jobs[0];
 		job.process(delta);
-		$Label.text += "\n" + job.title();
+		$Label.text += "\n" + job.title() + ": " + job.get_job_name() + " -> " + str(job.get_cell_pos());
 		$Label.text += "\n" + str(job.finished());
 		if job.finished():
 			jobs.remove(0);
 	elif time >= 100:
 		time = 0;
-		var newJob = job_system.request_job(last_cell, self)
-		if newJob:
-			jobs.append(newJob)
+		var newJobs = job_system.request_jobs(last_cell, self)
+		if newJobs:
+			for n in newJobs:
+				jobs.append(n)
+				print(n.get_job_name())
 	else:
 		time += 1;
 

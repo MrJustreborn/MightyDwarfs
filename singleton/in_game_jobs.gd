@@ -42,21 +42,28 @@ func get_tunnel_job_on_cell(pos: Vector2):
 				return _j;
 	return null;
 
-func request_job(pos: Vector2, caller: Node):
+func request_jobs(pos: Vector2, caller: Node):
 	var nearest: AbstractJob = null;
 	var lastPos = 500;
 	for j in jobs:
-		if (j.get_cell_pos() - pos).length() < lastPos && j.owner == null: #todo: is reachable
-			lastPos = (j.get_cell_pos() - pos).length()
+		if j.distance_from_cell(pos).size() < lastPos && j.distance_from_cell(pos).size() > 0:# && j.owner == null: #todo: is reachable
+			lastPos = j.distance_from_cell(pos).size();
 			nearest = j;
-			print(j, " ", j.owner)
+			#print(j, " ", j.owner)
 	if nearest:
 		print(pos, " -> ", lastPos, " ", nearest, " ", nearest.get_cell_pos(), " ", nearest.owner, " ", caller);
 		nearest.owner = caller;
-		return nearest;
+		var path = nearest.distance_from_cell(pos);
+		if path.size() > 1:
+			var walk: AbstractJob = preload("res://jobs/walk_job.gd").new(nearest.navigation, path[path.size() - 1]);
+			walk.personal = true;
+			walk.owner = caller;
+			return [walk, nearest];
+		else:
+			return [nearest]
 	else:
 		print(pos, " -> ", lastPos, " ", nearest, " ", nearest);
-	return null;
+	return [];
 
 func _get_job_titles_printable(jobs: Array):
 	var string = "";
