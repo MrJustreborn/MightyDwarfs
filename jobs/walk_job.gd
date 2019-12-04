@@ -1,7 +1,7 @@
 extends AbstractJob
 
 var navigation: AStar
-var target
+var target: Vector3
 var way_points: PoolVector3Array = [];
 
 func _init(nav, pos):
@@ -29,6 +29,11 @@ func calc_way_points() -> Array:
 	print("Waypoints size: ", path.size())
 	
 	return path;
+
+func get_cell_pos() -> Vector2:
+	var x = round(target.x / 2)
+	var y = round(target.y / 2)
+	return Vector2(x, y);
 
 func get_job_name() -> String:
 	return JobNames.WALK;

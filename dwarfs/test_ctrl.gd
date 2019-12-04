@@ -56,6 +56,7 @@ func _physics_process(delta):
 		job.physics_process(delta);
 	pass
 
+var time = 0;
 func _process(delta):
 	update();
 	var pos = get_viewport().get_camera().unproject_position(translation);
@@ -68,6 +69,13 @@ func _process(delta):
 		$Label.text += "\n" + str(job.finished());
 		if job.finished():
 			jobs.remove(0);
+	elif time >= 100:
+		time = 0;
+		var newJob = job_system.request_job(last_cell, self)
+		if newJob:
+			jobs.append(newJob)
+	else:
+		time += 1;
 
 #func updateLabel(next: Vector2):
 #	var dir = (last_cell-next)

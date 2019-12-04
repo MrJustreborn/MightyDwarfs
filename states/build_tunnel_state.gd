@@ -29,4 +29,7 @@ func map_input_event(camera: Camera, event: InputEvent, position: Vector3, norma
 				jobs.append(job);
 			
 			ctrl.get_job_system().submit_jobs(jobs);
-	pass
+	
+	elif event is InputEventMouseButton:
+		if event.button_index == BUTTON_RIGHT && event.button_mask == BUTTON_MASK_RIGHT:
+			ctrl.request_new_state(StateNames.NONE);

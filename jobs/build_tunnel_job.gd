@@ -8,6 +8,9 @@ func _init(pos: Vector2):
 func _setup_new_owner() -> void:
 	pass
 
+func get_cell_pos() -> Vector2:
+	return position;
+
 func get_job_name() -> String:
 	return JobNames.BUILD_TUNNEL;
 
@@ -30,4 +33,4 @@ func physics_process(delta: float) -> void:
 	pass
 
 func finished() -> bool:
-	return true;
+	return false;

@@ -34,6 +34,30 @@ func _add_job(job):
 func get_copy_of_all_jobs():
 	return jobs.duplicate(true);
 
+func get_tunnel_job_on_cell(pos: Vector2):
+	for j in jobs:
+		var _j: AbstractJob = j;
+		if _j.get_job_name() == JobNames.BUILD_TUNNEL:
+			if _j.get_cell_pos() == pos:
+				return _j;
+	return null;
+
+func request_job(pos: Vector2, caller: Node):
+	var nearest: AbstractJob = null;
+	var lastPos = 500;
+	for j in jobs:
+		if (j.get_cell_pos() - pos).length() < lastPos && j.owner == null: #todo: is reachable
+			lastPos = (j.get_cell_pos() - pos).length()
+			nearest = j;
+			print(j, " ", j.owner)
+	if nearest:
+		print(pos, " -> ", lastPos, " ", nearest, " ", nearest.get_cell_pos(), " ", nearest.owner, " ", caller);
+		nearest.owner = caller;
+		return nearest;
+	else:
+		print(pos, " -> ", lastPos, " ", nearest, " ", nearest);
+	return null;
+
 func _get_job_titles_printable(jobs: Array):
 	var string = "";
 	for job in jobs:

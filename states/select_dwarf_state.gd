@@ -26,10 +26,16 @@ func map_input_event(camera: Camera, event: InputEvent, position: Vector3, norma
 	#print(camera, "\t", event, "\t", position, "\n\t", normal, "\t", shape_idx, "\t", chunk, "\t", navigation)
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_RIGHT && event.button_mask == BUTTON_MASK_RIGHT:
-			var dwarfs = ctrl.get_tree().get_nodes_in_group(GroupNames.SELECTED_DWARFS)
-			for d in dwarfs:
-				var job: AbstractJob = preload("res://jobs/walk_job.gd").new(navigation, position);
-				job.personal = true;
-				job.owner = d;
-				ctrl.get_job_system().submit_jobs([job], job.owner);
+			var x = round(position.x / 2)
+			var y = round(position.y / 2)
+			var tunnelJob = ctrl.get_job_system().get_tunnel_job_on_cell(Vector2(x, y));
+			if tunnelJob:
+				print("TUNNEL_JOB ", tunnelJob)
+			else:
+				var dwarfs = ctrl.get_tree().get_nodes_in_group(GroupNames.SELECTED_DWARFS)
+				for d in dwarfs:
+					var job: AbstractJob = preload("res://jobs/walk_job.gd").new(navigation, position);
+					job.personal = true;
+					job.owner = d;
+					ctrl.get_job_system().submit_jobs([job], job.owner);
 		ctrl.request_new_state(StateNames.NONE);
