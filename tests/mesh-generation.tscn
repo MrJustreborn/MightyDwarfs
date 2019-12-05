@@ -92,7 +92,6 @@ material/0 = ExtResource( 6 )
 [node name="jobs" type="Spatial" parent="info"]
 
 [node name="Camera" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 script = ExtResource( 7 )
 
 [node name="Camera" type="Camera" parent="Camera"]

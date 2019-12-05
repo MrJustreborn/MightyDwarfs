@@ -17,6 +17,6 @@ func dwarf_input_event(camera: Camera, event: InputEvent, click_position: Vector
 	print("Nothing todo")
 	#assert(false)
 
-func map_input_event(camera: Camera, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int, chunk: Vector2, navigation: AStar, info: Node) -> void:
+func map_input_event(camera: Camera, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int, chunk: Vector2, navigation: AStar, meshMapCtrl: Node, info: Node) -> void:
 	print("Nothing todo")
 	#assert(false)

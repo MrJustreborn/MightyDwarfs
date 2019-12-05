@@ -24,7 +24,7 @@ func _input(event: InputEvent):
 				$Camera.translate(Vector3(0, 0, 1))
 	elif event is InputEventMouseMotion:
 		if Input.is_mouse_button_pressed(BUTTON_MASK_RIGHT):
-			print(rotation_degrees)
+			#print(rotation_degrees)
 			if rotation_degrees.y >= -70 && rotation_degrees.y <= 70:
 				rotate_y(deg2rad(-event.relative.x / 10.0));
 			elif rotation_degrees.y <= -70:

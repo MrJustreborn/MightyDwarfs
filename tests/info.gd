@@ -10,6 +10,7 @@ var curPoints = []
 func _ready():
 	$"/root/in_game_state".connect("state_changed", self, "_on_state_changed")
 	$"/root/in_game_jobs".connect("job_added", self, "_on_job_added");
+	$"/root/in_game_jobs".connect("job_removed", self, "_on_job_added");
 
 func _on_state_changed(newState):
 	$mouse_preview.visible = newState == StateNames.BUILD_TUNNEL
@@ -57,12 +58,20 @@ func set_mouse_pos(pos: Vector2):
 		$mouse_draw_preview.visible = false;
 
 func get_last_points() -> Array:
-	return lastPoints.duplicate(true);
+	return _filter_mineable(lastPoints.duplicate(true));
+
+func _filter_mineable(points: Array) -> Array:
+	var newArr = [];
+	for p in points:
+		if get_parent().is_mineable(p.x, p.y):
+			newArr.append(p);
+	return newArr;
 
 func get_color(x, y):
-	if get_parent()._is_wall(x, y):
-		return Color(0, 1, 0)
-	return Color(1, 0, 0)
+	print(Vector2(x,y), " is_mineable: ",get_parent().is_mineable(x, y))
+	if get_parent().is_mineable(x, y):# || get_parent()._is_fog(x, y):
+		return Color(1, 0, 0)
+	return Color(0, 0, 0)
 
 func generate_mesh():
 	print("Update info mesh")
@@ -83,19 +92,19 @@ func generate_mesh():
 		print("X")
 		for s in range(size + 1):
 			if _test.x < 0:
-				_plane(st, s)
+				_plane(st, start_pos.x + s, start_pos.y)
 				curPoints.append(start_pos + Vector2(s, 0))
 			else:
-				_plane(st, -s)
+				_plane(st, start_pos.x -s, start_pos.y)
 				curPoints.append(start_pos + Vector2(-s, 0))
 	elif _test.y != 0 && _test.x == 0:
 		print("Y")
 		for s in range(size + 1):
 			if _test.y < 0:
-				_plane(st, 0, s)
+				_plane(st, start_pos.x, start_pos.y + s)
 				curPoints.append(start_pos + Vector2(0, s))
 			else:
-				_plane(st, 0, -s)
+				_plane(st, start_pos.x, start_pos.y -s)
 				curPoints.append(start_pos + Vector2(0, -s))
 	
 	st.index();
@@ -105,7 +114,7 @@ func generate_mesh():
 	mesh.surface_set_material(0, $mouse_preview.get_surface_material(0));
 	
 	$mouse_draw_preview.mesh = mesh;
-	$mouse_draw_preview.transform.origin = Vector3(start_pos.x * 2, start_pos.y * 2, 0)
+	#$mouse_draw_preview.transform.origin = Vector3(start_pos.x * 2, start_pos.y * 2, 0)
 	
 	print(_test, size)
 
@@ -127,10 +136,12 @@ func generate_ui_mesh(positions: Array):
 	
 	$MeshInstance3.mesh = mesh;
 
-func _plane(st, posX = 0, posY = 0):
+func _plane(st: SurfaceTool, posX = 0, posY = 0):
 	var xOffset = posX;
 	var yOffset = posY;
 	var z = 0;
+	print(posX, " ", posY)
+	st.add_color(get_color(posX, posY));
 	st.add_uv(Vector2(0, 1))
 	st.add_vertex(Vector3(-1 + xOffset*2, 1 + yOffset*2, z))
 	

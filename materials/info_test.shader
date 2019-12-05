@@ -42,7 +42,13 @@ void vertex() {
 	//VERTEX.z = VERTEX.z + rand2(vec2(cos(TIME), VERTEX.x * 2.0)) * .020;
 }
 
-void fragment(){
+void fragment() {
+	vec4 tint_color;
+	if (COLOR.r == 1.0) {
+		tint_color = blue_tint;
+	} else {
+		tint_color = vec4(1.0, 0.0, 0.0, 1.0);
+	}
 	
 	vec2 noisecoord1 = UV * sprite_scale * scale_x;
 	vec2 noisecoord2 = UV * sprite_scale * scale_x + 4.0;
@@ -57,7 +63,7 @@ void fragment(){
 	
 	vec4 color = textureLod(SCREEN_TEXTURE, SCREEN_UV + distort_sum, 0.0);
 	
-	color = mix(color, blue_tint, 0.3);
+	color = mix(color, tint_color, 0.3);
 	color.rgb = mix(vec3(0.5), color.rgb, 1.4); //contrast
 	
 	//Edge

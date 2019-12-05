@@ -1,6 +1,7 @@
 extends Node
 
 signal job_added(new_job)
+signal job_removed(removed_job)
 
 var jobs = []
 
@@ -14,11 +15,13 @@ func submit_jobs(job: Array, to_instance: Node = null):
 		for j in job:
 			j.personal = true;
 			j.owner = to_instance;
+			j.jobSystem = self;
 		to_instance.set_personal_jobs(job);
 	else:
 		for j in job:
 			if !j.personal:
 				j.owner = null;
+				j.jobSystem = self;
 				_add_job(j);
 	print("Current jobs pending: ", jobs)
 
@@ -30,6 +33,12 @@ func _add_job(job):
 	jobs.append(job)
 	emit_signal("job_added", job);
 	print("new job added: ", job)
+
+func remove_finished_job(job: AbstractJob):
+	var where = jobs.find(job);
+	if where > 0:# && job.finished():
+		jobs.remove(where);
+		emit_signal("job_removed", job);
 
 func get_copy_of_all_jobs():
 	return jobs.duplicate(true);
@@ -54,7 +63,7 @@ func request_jobs(pos: Vector2, caller: Node):
 		print(pos, " -> ", lastPos, " ", nearest, " ", nearest.get_cell_pos(), " ", nearest.owner, " ", caller);
 		nearest.owner = caller;
 		var path = nearest.distance_from_cell(pos);
-		if path.size() > 1:
+		if path.size() > 0:
 			var walk: AbstractJob = preload("res://jobs/walk_job.gd").new(nearest.navigation, path[path.size() - 1]);
 			walk.personal = true;
 			walk.owner = caller;

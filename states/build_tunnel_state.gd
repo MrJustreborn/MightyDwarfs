@@ -12,7 +12,7 @@ func teardown_state() -> void:
 
 var last_pts = []
 
-func map_input_event(camera: Camera, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int, chunk: Vector2, navigation: AStar, info: Node):
+func map_input_event(camera: Camera, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int, chunk: Vector2, navigation: AStar, meshMapCtrl: Node, info: Node):
 	if event is InputEventMouseMotion:
 		if normal.z == 1:# && Input.is_mouse_button_pressed(BUTTON_LEFT):
 			var x = round(position.x / 2)
@@ -25,7 +25,7 @@ func map_input_event(camera: Camera, event: InputEvent, position: Vector3, norma
 			print("New build tunnel jobs to add: ", pts)
 			var jobs = []
 			for p in pts:
-				var job: AbstractJob = preload("res://jobs/build_tunnel_job.gd").new(p, navigation);
+				var job: AbstractJob = preload("res://jobs/build_tunnel_job.gd").new(p, navigation, meshMapCtrl);
 				jobs.append(job);
 			
 			ctrl.get_job_system().submit_jobs(jobs);

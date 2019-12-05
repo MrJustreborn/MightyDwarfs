@@ -225,7 +225,7 @@ func add_mesh_to(x: int, y: int, node: Node, mesh: Mesh, shape: Shape = null):
 		colShape.shape = shape;
 		mI.add_child(col);
 		col.add_child(colShape);
-		col.connect("input_event", $"/root/in_game_state", "_on_map_input_event", [Vector2(x, y), navigation, $info]);
+		col.connect("input_event", $"/root/in_game_state", "_on_map_input_event", [Vector2(x, y), navigation, self, $info]);
 
 func _on_StaticBody_input_event(camera, event, click_position, click_normal, shape_idx, data):
 	if event is InputEventMouseButton:
@@ -391,7 +391,7 @@ func _connect_navigation_points_from(xWorld: int, yWorld: int, pID):
 		#	navigation.add_point(newId, navPoint);
 		#	navigation.connect_points(pID, newId);
 
-func _cell_exists(x, y):
+func _cell_exists(x: int, y: int):
 #	if y > terrain.size() - 1 || x > terrain[y].size() - 1:
 #		return false;
 #	elif y <= 0 || x <= 0:
@@ -399,7 +399,7 @@ func _cell_exists(x, y):
 #	return true;
 	return terrain.has(y) && terrain[y].has(x);
 
-func _is_visible(x, y, checkPassage = true) -> bool:
+func _is_visible(x: int, y: int, checkPassage = true) -> bool:
 	if !terrain.has(y) || !terrain[y].has(x):
 		return false;
 #	if y > terrain.size() - 1:
@@ -414,7 +414,7 @@ func _is_visible(x, y, checkPassage = true) -> bool:
 		return true;
 	return false;
 
-func _is_fog(x, y) -> bool:
+func _is_fog(x: int, y: int) -> bool:
 	if !terrain.has(y) || !terrain[y].has(x):
 		return false;
 #	if y > terrain.size() - 1:
@@ -427,7 +427,14 @@ func _is_fog(x, y) -> bool:
 		return true;
 	return false;
 
-func _is_wall(x, y, maxDepth = 0) -> bool:
+func _is_hidden(x: int, y: int) -> bool:
+	if !terrain.has(y) || !terrain[y].has(x):
+		return false;
+	elif terrain[y][x][0] == 0:
+		return true;
+	return false;
+
+func _is_wall(x: int, y: int, maxDepth = 0) -> bool:
 	if !terrain.has(y) || !terrain[y].has(x):
 		return true;
 #	if y > terrain.size() - 1:
@@ -441,6 +448,10 @@ func _is_wall(x, y, maxDepth = 0) -> bool:
 	elif terrain[y][x][1] != 0:
 		return false;
 	return true;
+
+func is_mineable(x: int, y: int):
+	#print("MINEABLE: ", _cell_exists(x,y), " - ", _is_wall(x,y), " -> ", terrain[y][x])
+	return _cell_exists(x, y) && (_is_wall(x, y) || _is_hidden(x, y))
 
 func _is_corner_left(x, y) -> bool:
 #	if y > terrain.size() - 1:
