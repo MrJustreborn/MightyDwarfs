@@ -21,7 +21,7 @@ var dirty_chunks = []
 var check_chunks = []
 var first_flag = true;
 var discovered_flag = false;
-func update(x: int, y: int, radius_fog = 5, radius_hidden = 2, damage = 0):
+func update(x: int, y: int, radius_fog = 5, radius_hidden = 2, targetDepth = 0):
 	# Make everything with fog
 	if first_flag:
 		first_flag = false;
@@ -35,7 +35,7 @@ func update(x: int, y: int, radius_fog = 5, radius_hidden = 2, damage = 0):
 	
 	_mark_visible(x, y, radius_fog, true);
 	_mark_visible(x, y, radius_hidden, false);
-	_update_depth(x, y, damage)
+	_update_depth(x, y, targetDepth)
 
 func _mark_visible(x, y, radius, fogOnly):
 	for xOff in range(radius):
@@ -79,12 +79,12 @@ func _make_visible(x, y, fogOnly):
 				discovered_flag = true;
 			_add_check_chunk(x, y)
 
-func _update_depth(x, y, damage):
-	if _cell_exists(x, y) && terrain_next_frame[y][x][3] < damage && terrain_next_frame[y][x][3] <= MAX_DAMAGE:
-		terrain_next_frame[y][x][3] = damage;
+func _update_depth(x, y, targetDepth):
+	if _cell_exists(x, y) && terrain_next_frame[y][x][1] < targetDepth && terrain_next_frame[y][x][3] <= MAX_DAMAGE:
+		terrain_next_frame[y][x][3] += 1;
 		_add_check_chunk(x, y)
 		discovered_flag = true
-	elif _cell_exists(x, y) && terrain_next_frame[y][x][3] >= MAX_DAMAGE:
+	elif _cell_exists(x, y) && terrain_next_frame[y][x][3] >= MAX_DAMAGE && terrain_next_frame[y][x][1] < targetDepth:
 		terrain_next_frame[y][x][1] = terrain_next_frame[y][x][1] + 1;
 		terrain_next_frame[y][x][3] = 0;
 		_add_check_chunk(x, y)

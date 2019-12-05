@@ -23,13 +23,13 @@ func distance_from_cell(cell: Vector2) -> Array:
 	var targetPos = navigation.get_point_position(toPos);
 	
 	var dist = (targetPos - selfPos).length()
-	print(self, " Dist: ", dist);
+	#print(self, " Dist: ", dist);
 	if dist > 3:
 		return [];
 	
 	var fromPos = navigation.get_closest_point(target);
 	var path = navigation.get_point_path(fromPos, toPos);
-	print(self, " -> ", path)
+	#print(self, " -> ", path)
 	return path;
 
 func get_job_name() -> String:
@@ -48,7 +48,9 @@ func description() -> String:
 	return tr("");
 
 func process(delta: float) -> void:
-	pass
+	mapMeshCtrl.update(position.x, position.y, 0, 0, 1);
+	var c = mapMeshCtrl.terrain_next_frame[int(position.y)][int(position.x)]
+	#print("asdf ", c, " ", mapMeshCtrl._cell_exists(position.x, position.y), mapMeshCtrl._cell_exists(position.x, position.y) && c[1] < 1 && c[3] <= 5)
 
 func physics_process(delta: float) -> void:
 	pass

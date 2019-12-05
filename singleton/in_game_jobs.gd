@@ -35,8 +35,9 @@ func _add_job(job):
 	print("new job added: ", job)
 
 func remove_finished_job(job: AbstractJob):
+	print("Remove: ", job)
 	var where = jobs.find(job);
-	if where > 0:# && job.finished():
+	if where >= 0:# && job.finished():
 		jobs.remove(where);
 		emit_signal("job_removed", job);
 
