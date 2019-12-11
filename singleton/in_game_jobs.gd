@@ -65,9 +65,11 @@ func request_jobs(pos: Vector2, caller: Node):
 		nearest.owner = caller;
 		var path = nearest.distance_from_cell(pos);
 		if path.size() > 0:
-			var walk: AbstractJob = preload("res://jobs/walk_job.gd").new(nearest.navigation, path[path.size() - 1]);
-			walk.personal = true;
-			walk.owner = caller;
+			var walkJob = preload("res://jobs/WalkJob.cs")
+			#var walk: AbstractJob = preload("res://jobs/walk_job.gd").new(nearest.navigation, path[path.size() - 1]);
+			var walk = walkJob.new(nearest.navigation, path[path.size() - 1])
+			walk.Personal = true;
+			walk.Owner = caller;
 			return [walk, nearest];
 		else:
 			return [nearest]

@@ -34,8 +34,10 @@ func map_input_event(camera: Camera, event: InputEvent, position: Vector3, norma
 			else:
 				var dwarfs = ctrl.get_tree().get_nodes_in_group(GroupNames.SELECTED_DWARFS)
 				for d in dwarfs:
-					var job: AbstractJob = preload("res://jobs/walk_job.gd").new(navigation, position);
-					job.personal = true;
-					job.owner = d;
+					#var job: AbstractJob = preload("res://jobs/walk_job.gd").new(navigation, position);
+					var _job = preload("res://jobs/WalkJob.cs");
+					var job = _job.new(navigation, position);
+					job.Personal = true;
+					job.Owner = d;
 					ctrl.get_job_system().submit_jobs([job], job.owner);
 		ctrl.request_new_state(StateNames.NONE);

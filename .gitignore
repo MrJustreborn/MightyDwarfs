@@ -1,4 +1,5 @@
 .import
+.mono
 
 tests/testMesh.tres
 tests/testMesh2.tres
