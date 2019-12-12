@@ -105,7 +105,7 @@ func _ready():
 	#var res = JSON.parse(f.get_as_text()).result
 	#print(res['terrain'])
 	#terrain = res['terrain'].duplicate(true)
-	
+	var timestamp = OS.get_system_time_msecs();
 	var tmpTerrain = {};
 	for y in range(-5, 15):
 		tmpTerrain[y] = {}
@@ -117,6 +117,9 @@ func _ready():
 			pass
 	terrain = tmpTerrain.duplicate(true)
 	_calculate_complete_mesh();
+	var timestamp2 = OS.get_system_time_msecs();
+	
+	print("FINISHED MAP: \t", timestamp2 - timestamp, " msecs");
 
 func _process(delta):
 	for chunk in check_chunks:

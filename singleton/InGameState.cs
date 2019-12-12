@@ -23,6 +23,18 @@ namespace singleton {
             this.request_new_state(constant.StateNames.NONE);
         }
 
+        public void _on_building_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Node building) {
+            state.building_input_event(camera, _event, click_position, click_normal, shape_idx, building);
+        }
+
+        public void _on_dwarf_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, KinematicBody dwarf) {
+            state.dwarf_input_event(camera, _event, click_position, click_normal, shape_idx, dwarf);
+        }
+
+        public void _on_map_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Vector2 chunk, AStar navigation, Node meshMapCtrl, Node info) {
+            state.map_input_event(camera, _event, click_position, click_normal, shape_idx, chunk, navigation, meshMapCtrl, info);
+        }
+
         public InGameJobs get_job_system() {
             return GetNode<InGameJobs>("/root/in_game_jobs");
         }

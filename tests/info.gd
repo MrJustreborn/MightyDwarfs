@@ -16,11 +16,11 @@ func _on_state_changed(newState):
 	$mouse_preview.visible = newState == StateNames.BUILD_TUNNEL
 
 func _on_job_added(newJob):
-	if newJob.get_job_name() == "Build Tunnel C#":#JobNames.BUILD_TUNNEL:
+	if newJob.get_job_name() == JobNames.BUILD_TUNNEL:
 		var jobs = $"/root/in_game_jobs".get_copy_of_all_jobs();
 		var positions = []
 		for j in jobs:
-			if j.get_job_name() == "Build Tunnel C#":#JobNames.BUILD_TUNNEL:
+			if j.get_job_name() == JobNames.BUILD_TUNNEL:
 				positions.append(j.position);
 		generate_ui_mesh(positions);
 	else:

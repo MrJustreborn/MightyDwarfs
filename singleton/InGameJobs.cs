@@ -118,7 +118,7 @@ namespace singleton
             }
             else
             {
-                GD.Print(pos, " -> ", lastPos, " ", nearest, " ", nearest);
+                GD.Print(pos, " -> ", lastPos);
             }
             return new Job.AbstractJob[0];
 

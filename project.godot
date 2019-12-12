@@ -56,8 +56,8 @@ config/icon="res://icon.png"
 
 [autoload]
 
-in_game_state="*res://singleton/in_game_state.gd"
-in_game_jobs="*res://singleton/in_game_jobs.gd"
+in_game_state="*res://singleton/InGameState.cs"
+in_game_jobs="*res://singleton/InGameJobs.cs"
 
 [debug]
 

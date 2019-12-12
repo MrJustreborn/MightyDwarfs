@@ -6,7 +6,7 @@ namespace State
     public class BuildTunnelState : AbstractState
     {
 
-        private Vector3[] last_pts = new Vector3[0];
+        private Vector2[] last_pts = new Vector2[0];
         public BuildTunnelState(Node ctrl) : base(ctrl)
         {
             this.Name = constant.StateNames.BUILD_TUNNEL;
@@ -26,7 +26,7 @@ namespace State
                 }
             }
 
-            Vector3[] pts = (Vector3[])info.Call("get_last_points");
+            Vector2[] pts = (Vector2[])info.Call("get_last_points");
             if (!last_pts.Equals(pts))
             {
                 last_pts = pts;
@@ -36,9 +36,9 @@ namespace State
                     GD.Print("New build tunnel jobs to add: ", pts);
                     List<Job.AbstractJob> jobs = new List<Job.AbstractJob>();
 
-                    foreach (Vector3 p in pts)
+                    foreach (Vector2 p in pts)
                     {
-                        var job = new Job.BuildTunnelJob(new Vector2(p.x, p.y), navigation, meshMapCtrl);
+                        var job = new Job.BuildTunnelJob(p, navigation, meshMapCtrl);
                         jobs.Add(job);
                     }
 

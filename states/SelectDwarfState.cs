@@ -29,7 +29,7 @@ namespace State
                     }
                     else
                     {
-                        ((Node)ctrl.Call("get_tree")).Call("call_group", constant.GroupNames.SELECTED_DWARFS, "remove_from_group", constant.GroupNames.SELECTED_DWARFS);
+                        ((SceneTree)ctrl.Call("get_tree")).CallGroup(constant.GroupNames.SELECTED_DWARFS, "remove_from_group", constant.GroupNames.SELECTED_DWARFS);
                         dwarf.AddToGroup(constant.GroupNames.SELECTED_DWARFS);
                     }
                 }
@@ -44,21 +44,21 @@ namespace State
                 {
                     var x = Mathf.Round(click_position.x / 2);
                     var y = Mathf.Round(click_position.y / 2);
-                    Job.AbstractJob job = (Job.AbstractJob)((Node)ctrl.Call("get_job_system")).Call("get_tunnel_job_on_cell", new Vector2(x, y));
+                    Job.AbstractJob job = ((singleton.InGameState)ctrl).get_job_system().get_tunnel_job_on_cell(new Vector2(x, y));
                     if (job != null)
                     {
                         GD.Print(constant.JobNames.BUILD_TUNNEL, job);
                     }
                     else
                     {
-                        KinematicBody[] dwarfs = (KinematicBody[])((Node)ctrl.Call("get_tree")).Call("get_nodes_in_group", constant.GroupNames.SELECTED_DWARFS);
+                        var dwarfs = ((SceneTree)ctrl.Call("get_tree")).GetNodesInGroup(constant.GroupNames.SELECTED_DWARFS);
                         foreach (KinematicBody d in dwarfs)
                         {
                             Job.AbstractJob walkJob = new Job.WalkJob(navigation, click_position);
                             walkJob.Personal = true;
                             walkJob.Owner = d;
                             Job.AbstractJob[] jobsToAdd = { walkJob };
-                            ((Node)ctrl.Call("get_job_system")).Call("submit_jobs", jobsToAdd, walkJob.Owner);
+                            ((singleton.InGameState)ctrl).get_job_system().submit_jobs(jobsToAdd, walkJob.Owner);
                         }
                     }
                 }
