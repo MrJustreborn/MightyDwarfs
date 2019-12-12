@@ -12,9 +12,9 @@ namespace singleton
 
         private List<Job.AbstractJob> jobs = new List<Job.AbstractJob>();
 
-        public void submit_jobs(Job.AbstractJob[] newJobs, KinematicBody to_instance = null)
+        public void submit_jobs(Job.AbstractJob[] newJobs, entities.Dwarf to_instance = null)
         {
-            GD.Print("Submit new jobs: ", newJobs, " -> ", to_instance);
+            GD.Print("Submit new jobs: ", newJobs, " -> ", to_instance != null);
 
             if (to_instance != null && to_instance.HasMethod("set_personal_jobs"))
             {
@@ -24,7 +24,7 @@ namespace singleton
                     j.Owner = to_instance;
                     j.jobSystem = this;
                 }
-                to_instance.Call("set_personal_jobs", newJobs);
+                to_instance.set_personal_jobs(newJobs);
             }
             else
             {
@@ -84,8 +84,10 @@ namespace singleton
             return null;
         }
 
-        public Job.AbstractJob[] request_jobs(Vector2 pos, KinematicBody caller)
+        public Job.AbstractJob[] request_jobs(Vector2 pos, entities.Dwarf caller)
         {
+            // Vector2 pos = new Vector2(x, y);
+            // KinematicBody caller = null;
             Job.AbstractJob nearest = null;
             int lastPos = 500;
 

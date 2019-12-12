@@ -11,10 +11,6 @@ namespace Job
 
         private List<Vector3> way_points;
 
-        public WalkJob()
-        {
-            GD.Print("Constructor NO args");
-        }
         public WalkJob(AStar nav, Vector3 pos)
         {
             GD.Print("Constructor args", nav, pos);

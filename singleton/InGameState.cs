@@ -40,6 +40,7 @@ namespace singleton {
         }
 
         public void request_new_state(string newState) {
+            GD.Print("Request new state: ", newState);
             if (!CURRENT_STATE.Equals(newState)) {
                 state?.teardown_state();
                 switch (newState)

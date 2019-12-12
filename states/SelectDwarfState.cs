@@ -12,7 +12,7 @@ namespace State
         public override void teardown_state()
         {
             base.teardown_state();
-            ((Node)ctrl.Call("get_tree")).Call("call_group", constant.GroupNames.SELECTED_DWARFS, "remove_from_group", constant.GroupNames.SELECTED_DWARFS);
+            ((SceneTree)ctrl.Call("get_tree")).CallGroup(constant.GroupNames.SELECTED_DWARFS, "remove_from_group", constant.GroupNames.SELECTED_DWARFS);
         }
 
         public override void building_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Node building) { }
@@ -52,7 +52,7 @@ namespace State
                     else
                     {
                         var dwarfs = ((SceneTree)ctrl.Call("get_tree")).GetNodesInGroup(constant.GroupNames.SELECTED_DWARFS);
-                        foreach (KinematicBody d in dwarfs)
+                        foreach (entities.Dwarf d in dwarfs)
                         {
                             Job.AbstractJob walkJob = new Job.WalkJob(navigation, click_position);
                             walkJob.Personal = true;
@@ -62,6 +62,7 @@ namespace State
                         }
                     }
                 }
+                ((singleton.InGameState)ctrl).request_new_state(constant.StateNames.NONE);
             }
         }
     }

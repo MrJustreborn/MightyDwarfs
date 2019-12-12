@@ -25,8 +25,23 @@ namespace State
                     info.Call("set_mouse_pos", new Vector2(x, y));
                 }
             }
+            var TMP = info.Call("get_last_points");
 
-            Vector2[] pts = (Vector2[])info.Call("get_last_points");
+            GD.Print(TMP, " -> ", TMP.GetType());
+
+            Godot.Collections.Array _pts = (Godot.Collections.Array)info.Call("get_last_points");
+
+            List<Vector2> tmpList = new List<Vector2>();
+            foreach (var item in _pts)
+            {
+                // GD.Print("ITEM: ", item, " -> ", item.GetType());
+                if (item is Godot.Vector2) {
+                    tmpList.Add((Vector2)item);
+                }
+            }
+
+            Vector2[] pts = tmpList.ToArray();
+            GD.Print("pts: ", pts, " ? ", last_pts);
             if (!last_pts.Equals(pts))
             {
                 last_pts = pts;
@@ -43,7 +58,7 @@ namespace State
                     }
 
                     var jobsarr = jobs.ToArray();
-                    ((Node)ctrl.Call("get_job_system")).Call("submit_jobs", jobsarr);
+                    ((singleton.InGameState)ctrl).get_job_system().submit_jobs(jobsarr);
                 }
             }
             else if (_event is InputEventMouseButton)

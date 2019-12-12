@@ -5,8 +5,8 @@ namespace Job
     public abstract class AbstractJob : Reference
     {
 
-        private KinematicBody owner = null;
-        public KinematicBody Owner
+        private entities.Dwarf owner = null;
+        public entities.Dwarf Owner
         {
             get
             {
