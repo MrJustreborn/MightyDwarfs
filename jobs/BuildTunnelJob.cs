@@ -46,7 +46,7 @@ namespace Job
 
         public override string get_job_name()
         {
-            return "Build Tunnel C#";
+            return constant.JobNames.BUILD_TUNNEL;
         }
 
         public override bool equals(AbstractJob other)

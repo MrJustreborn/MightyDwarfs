@@ -76,7 +76,7 @@ namespace Job
 
         public override string get_job_name()
         {
-            return "WALK - C#";
+            return constant.JobNames.WALK;
         }
 
         public override Vector2 get_cell_pos()
