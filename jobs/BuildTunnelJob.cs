@@ -2,14 +2,14 @@ using Godot;
 
 namespace Job
 {
-    public abstract class BuildTunnelJob : AbstractJob
+    public class BuildTunnelJob : AbstractJob
     {
 
         private Vector2 position;
         private AStar navigation;
         private Node mapMeshCtrl;
 
-        protected BuildTunnelJob(Vector2 pos, AStar nav, Node meshCtrl)
+        public BuildTunnelJob(Vector2 pos, AStar nav, Node meshCtrl)
         {
             this.position = pos;
             this.navigation = nav;

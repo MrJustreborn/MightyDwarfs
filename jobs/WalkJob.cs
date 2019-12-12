@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Job
 {
-    public abstract class WalkJob : AbstractJob
+    public class WalkJob : AbstractJob
     {
         private AStar navigation;
         private Vector3 target;
