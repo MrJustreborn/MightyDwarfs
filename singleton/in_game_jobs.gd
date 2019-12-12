@@ -27,14 +27,14 @@ func submit_jobs(job: Array, to_instance: Node = null):
 
 func _add_job(job):
 	for j in jobs:
-		var _j: AbstractJob = j;
+		var _j = j;
 		if _j.equals(job):
 			return;
 	jobs.append(job)
 	emit_signal("job_added", job);
 	print("new job added: ", job)
 
-func remove_finished_job(job: AbstractJob):
+func remove_finished_job(job):
 	print("Remove: ", job)
 	var where = jobs.find(job);
 	if where >= 0:# && job.finished():
@@ -46,14 +46,14 @@ func get_copy_of_all_jobs():
 
 func get_tunnel_job_on_cell(pos: Vector2):
 	for j in jobs:
-		var _j: AbstractJob = j;
+		var _j = j;
 		if _j.get_job_name() == JobNames.BUILD_TUNNEL:
 			if _j.get_cell_pos() == pos:
 				return _j;
 	return null;
 
 func request_jobs(pos: Vector2, caller: Node):
-	var nearest: AbstractJob = null;
+	var nearest = null;
 	var lastPos = 500;
 	for j in jobs:
 		if j.distance_from_cell(pos).size() < lastPos && j.distance_from_cell(pos).size() > 0:# && j.owner == null: #todo: is reachable
@@ -80,6 +80,6 @@ func request_jobs(pos: Vector2, caller: Node):
 func _get_job_titles_printable(jobs: Array):
 	var string = "";
 	for job in jobs:
-		var j: AbstractJob = job;
+		var j = job;
 		string += j.title() + "|";
 	return string;

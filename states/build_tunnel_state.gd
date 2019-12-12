@@ -25,7 +25,9 @@ func map_input_event(camera: Camera, event: InputEvent, position: Vector3, norma
 			print("New build tunnel jobs to add: ", pts)
 			var jobs = []
 			for p in pts:
-				var job: AbstractJob = preload("res://jobs/build_tunnel_job.gd").new(p, navigation, meshMapCtrl);
+				#var job: AbstractJob = preload("res://jobs/build_tunnel_job.gd").new(p, navigation, meshMapCtrl);
+				var _job = preload("res://jobs/BuildTunnelJob.cs");
+				var job = _job.new(p, navigation, meshMapCtrl);
 				jobs.append(job);
 			
 			ctrl.get_job_system().submit_jobs(jobs);

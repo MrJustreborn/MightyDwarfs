@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
+namespace Job {
 public abstract class WalkJob : AbstractJob
 {
     private AStar navigation;
@@ -98,4 +99,5 @@ public abstract class WalkJob : AbstractJob
         returnPath.AddRange(path);
         return returnPath;
     }
+}
 }

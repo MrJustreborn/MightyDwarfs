@@ -1,5 +1,6 @@
 using Godot;
 
+namespace Job {
 public abstract class AbstractJob : Reference
 {
 
@@ -77,4 +78,5 @@ public abstract class AbstractJob : Reference
     {
         return true;
     }
+}
 }
