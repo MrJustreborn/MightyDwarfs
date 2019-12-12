@@ -6,7 +6,7 @@ namespace Job
     {
 
         private Vector2 position;
-        private AStar navigation;
+        public AStar navigation {get; private set;}
         private Node mapMeshCtrl;
 
         public BuildTunnelJob(Vector2 pos, AStar nav, Node meshCtrl)
@@ -23,7 +23,7 @@ namespace Job
             return this.position;
         }
 
-        public Vector3[] distance_from_cell(Vector2 cell)
+        public override Vector3[] distance_from_cell(Vector2 cell)
         {
             var target = new Vector3(cell.x * 2, cell.y * 2, 0);
             var selfPos = new Vector3(position.x * 2, position.y * 2, 0);

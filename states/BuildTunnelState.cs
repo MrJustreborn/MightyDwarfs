@@ -3,7 +3,7 @@ using Godot;
 
 namespace State
 {
-    public abstract class BuildTunnelState : AbstractState
+    public class BuildTunnelState : AbstractState
     {
 
         private Vector3[] last_pts = new Vector3[0];

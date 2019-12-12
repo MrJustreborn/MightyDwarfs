@@ -2,7 +2,7 @@ using Godot;
 
 namespace State
 {
-    public abstract class NoneState : AbstractState
+    public class NoneState : AbstractState
     {
         public NoneState(Node ctrl) : base(ctrl)
         {

@@ -43,6 +43,10 @@ namespace Job
             return new Vector2();
         }
 
+        public virtual Vector3[] distance_from_cell(Vector2 cell)
+        {
+            return new Vector3[0];
+        }
         public virtual bool is_reachable_from_cell(Vector2 cell)
         {
             return false;

@@ -2,7 +2,7 @@ using Godot;
 
 namespace State
 {
-    public abstract class SelectDwarfState : AbstractState
+    public class SelectDwarfState : AbstractState
     {
         public SelectDwarfState(Node ctrl) : base(ctrl)
         {
