@@ -10,21 +10,6 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Reference",
-"class": "AbstractJob",
-"language": "GDScript",
-"path": "res://jobs/abstract_job.gd"
-}, {
-"base": "Reference",
-"class": "AbstractState",
-"language": "GDScript",
-"path": "res://states/abstract_state.gd"
-}, {
-"base": "KinematicBody",
-"class": "Dwarf",
-"language": "GDScript",
-"path": "res://dwarfs/test_ctrl.gd"
-}, {
-"base": "Reference",
 "class": "GroupNames",
 "language": "GDScript",
 "path": "res://singleton/group_names.gd"
@@ -40,9 +25,6 @@ _global_script_classes=[ {
 "path": "res://singleton/state_names.gd"
 } ]
 _global_script_class_icons={
-"AbstractJob": "",
-"AbstractState": "",
-"Dwarf": "",
 "GroupNames": "",
 "JobNames": "",
 "StateNames": ""
