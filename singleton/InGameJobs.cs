@@ -102,7 +102,7 @@ namespace singleton
 
             if (nearest != null)
             {
-                GD.Print(pos, " -> ", lastPos, " ", nearest, " ", nearest.get_cell_pos(), " ", nearest.Owner, " ", caller);
+                GD.Print(pos, " -> ", lastPos, " ", nearest, " ", nearest.get_cell_pos(), " ", GD.Str(nearest.Owner), " ", caller);
                 nearest.Owner = caller;
 
                 var path = nearest.distance_from_cell(pos);

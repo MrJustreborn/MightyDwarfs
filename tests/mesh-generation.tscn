@@ -4,7 +4,7 @@
 [ext_resource path="res://tests/testMesh2.tres" type="ArrayMesh" id=2]
 [ext_resource path="res://dwarfs/test.tscn" type="PackedScene" id=3]
 [ext_resource path="res://tests/caves/cave_1.tscn" type="PackedScene" id=4]
-[ext_resource path="res://tests/info.gd" type="Script" id=5]
+[ext_resource path="res://tests/Info.cs" type="Script" id=5]
 [ext_resource path="res://materials/info_test.tres" type="Material" id=6]
 [ext_resource path="res://tests/Camera.gd" type="Script" id=7]
 [ext_resource path="res://tests/Grenzstein.gd" type="Script" id=8]
@@ -61,10 +61,10 @@ visible = false
 
 [node name="Left" parent="dwarfs" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 4, -1 )
+WASD = true
 
 [node name="Right" parent="dwarfs" instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 4, -1 )
-WASD = true
 
 [node name="caves" type="Spatial" parent="."]
 visible = false

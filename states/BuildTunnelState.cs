@@ -14,7 +14,7 @@ namespace State
 
         public override void building_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Node building) { }
         public override void dwarf_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Node dwarf) { }
-        public override void map_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Vector2 chunk, AStar navigation, Node meshMapCtrl, Node info)
+        public override void map_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Vector2 chunk, AStar navigation, Node meshMapCtrl, Info info)
         {
             if (_event is InputEventMouseMotion)
             {
@@ -22,26 +22,11 @@ namespace State
                 {
                     var x = Mathf.Round(click_position.x / 2);
                     var y = Mathf.Round(click_position.y / 2);
-                    info.Call("set_mouse_pos", new Vector2(x, y));
-                }
-            }
-            var TMP = info.Call("get_last_points");
-
-            GD.Print(TMP, " -> ", TMP.GetType());
-
-            Godot.Collections.Array _pts = (Godot.Collections.Array)info.Call("get_last_points");
-
-            List<Vector2> tmpList = new List<Vector2>();
-            foreach (var item in _pts)
-            {
-                // GD.Print("ITEM: ", item, " -> ", item.GetType());
-                if (item is Godot.Vector2) {
-                    tmpList.Add((Vector2)item);
+                    info.MouseCellPosistion = new Vector2(x, y);
                 }
             }
 
-            Vector2[] pts = tmpList.ToArray();
-            GD.Print("pts: ", pts, " ? ", last_pts);
+            var pts = info.get_last_points();
             if (!last_pts.Equals(pts))
             {
                 last_pts = pts;
@@ -61,7 +46,7 @@ namespace State
                     ((singleton.InGameState)ctrl).get_job_system().submit_jobs(jobsarr);
                 }
             }
-            else if (_event is InputEventMouseButton)
+            if (_event is InputEventMouseButton)
             {
                 var tmpInput = (InputEventMouseButton)_event;
                 if (tmpInput.ButtonIndex == (int)ButtonList.Right && tmpInput.ButtonMask == (int)ButtonList.MaskRight)

@@ -5,7 +5,7 @@ namespace singleton {
         [Signal]
         delegate void state_changed(string newState);
 
-        private string CURRENT_STATE = "";
+        public string CURRENT_STATE {get; private set;} = "";
 
         private State.AbstractState STATE_NONE;
         private State.AbstractState STATE_SELECT_DWARF;
@@ -31,7 +31,7 @@ namespace singleton {
             state.dwarf_input_event(camera, _event, click_position, click_normal, shape_idx, dwarf);
         }
 
-        public void _on_map_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Vector2 chunk, AStar navigation, Node meshMapCtrl, Node info) {
+        public void _on_map_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Vector2 chunk, AStar navigation, Node meshMapCtrl, Info info) {
             state.map_input_event(camera, _event, click_position, click_normal, shape_idx, chunk, navigation, meshMapCtrl, info);
         }
 
