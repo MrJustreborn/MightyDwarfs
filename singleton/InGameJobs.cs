@@ -93,7 +93,7 @@ namespace singleton
 
             foreach (var j in jobs)
             {
-                if (j.distance_from_cell(pos).Length < lastPos && j.distance_from_cell(pos).Length > 0)
+                if (j.distance_from_cell(pos).Length < lastPos && j.distance_from_cell(pos).Length > 0 && j.Owner == null)
                 {
                     lastPos = j.distance_from_cell(pos).Length;
                     nearest = j;
