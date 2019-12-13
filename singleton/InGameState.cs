@@ -1,11 +1,13 @@
 using Godot;
 
-namespace singleton {
-    public class InGameState : Node {
+namespace singleton
+{
+    public class InGameState : Node
+    {
         [Signal]
         delegate void state_changed(string newState);
 
-        public string CURRENT_STATE {get; private set;} = "";
+        public string CURRENT_STATE { get; private set; } = "";
 
         private State.AbstractState STATE_NONE;
         private State.AbstractState STATE_SELECT_DWARF;
@@ -13,35 +15,43 @@ namespace singleton {
 
         private State.AbstractState state = null;
 
-        public InGameState() {
+        public InGameState()
+        {
             STATE_NONE = new State.NoneState(this);
             STATE_SELECT_DWARF = new State.SelectDwarfState(this);
             STATE_BUILD_TUNNEL = new State.BuildTunnelState(this);
         }
 
-        public override void _Ready() {
+        public override void _Ready()
+        {
             this.request_new_state(constant.StateNames.NONE);
         }
 
-        public void _on_building_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Node building) {
+        public void _on_building_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Node building)
+        {
             state.building_input_event(camera, _event, click_position, click_normal, shape_idx, building);
         }
 
-        public void _on_dwarf_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, KinematicBody dwarf) {
+        public void _on_dwarf_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, KinematicBody dwarf)
+        {
             state.dwarf_input_event(camera, _event, click_position, click_normal, shape_idx, dwarf);
         }
 
-        public void _on_map_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Vector2 chunk, AStar navigation, Node meshMapCtrl, Info info) {
+        public void _on_map_input_event(Camera camera, InputEvent _event, Vector3 click_position, Vector3 click_normal, int shape_idx, Vector2 chunk, AStar navigation, Node meshMapCtrl, Info info)
+        {
             state.map_input_event(camera, _event, click_position, click_normal, shape_idx, chunk, navigation, meshMapCtrl, info);
         }
 
-        public InGameJobs get_job_system() {
+        public InGameJobs get_job_system()
+        {
             return GetNode<InGameJobs>("/root/in_game_jobs");
         }
 
-        public void request_new_state(string newState) {
+        public void request_new_state(string newState)
+        {
             GD.Print("Request new state: ", newState);
-            if (!CURRENT_STATE.Equals(newState)) {
+            if (!CURRENT_STATE.Equals(newState))
+            {
                 state?.teardown_state();
                 switch (newState)
                 {

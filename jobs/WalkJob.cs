@@ -13,24 +13,9 @@ namespace Job
 
         public WalkJob(AStar nav, Vector3 pos)
         {
-            GD.Print("Constructor args", nav, pos);
-            GD.Print(nav is AStar);
-            GD.Print(pos is Vector3);
             this.navigation = nav;
             this.target = pos;
         }
-
-        // public void _Init(AStar nav, Vector3 pos) {
-        //     GD.Print("_init args");
-        //     this.navigation = nav;
-        //     this.target = pos;
-        //     base._Init();
-        // }
-
-        // public override void _Init() {
-        //     GD.Print("_init NO args");
-        //     base._Init();
-        // }
 
         public override void physics_process(float delta)
         {
