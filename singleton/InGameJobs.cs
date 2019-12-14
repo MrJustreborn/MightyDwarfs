@@ -120,7 +120,7 @@ namespace singleton
             }
             else
             {
-                GD.Print(pos, " -> ", lastPos);
+                // GD.Print(pos, " -> ", lastPos);
             }
             return new Job.AbstractJob[0];
 

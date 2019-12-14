@@ -6,7 +6,7 @@ namespace Job
     {
 
         private Vector2 position;
-        public AStar navigation {get; private set;}
+        public AStar navigation { get; private set; }
         private Node mapMeshCtrl;
 
         public BuildTunnelJob(Vector2 pos, AStar nav, Node meshCtrl)
@@ -28,7 +28,7 @@ namespace Job
             var target = new Vector3(cell.x * 2, cell.y * 2, 0);
             var selfPos = new Vector3(position.x * 2, position.y * 2, 0);
 
-            var toPos = navigation.GetClosestPoint(selfPos);
+            var toPos = GetclosesPointInNavigation(selfPos);//navigation.GetClosestPoint(selfPos);
             var targetPos = navigation.GetPointPosition(toPos);
 
             var dist = (targetPos - selfPos).Length();
@@ -42,6 +42,42 @@ namespace Job
             var path = navigation.GetPointPath(fromPos, toPos);
             // print(self, " -> ", path)
             return path;
+        }
+
+        private int GetclosesPointInNavigation(Vector3 pos)
+        {
+            var pointN = navigation.GetClosestPoint(pos + new Vector3(0, 0.1f, 0));
+            var pointS = navigation.GetClosestPoint(pos + new Vector3(0, -0.1f, 0));
+            var pointW = navigation.GetClosestPoint(pos + new Vector3(-0.1f, 0, 0));
+            var pointE = navigation.GetClosestPoint(pos + new Vector3(0.1f, 0, 0));
+
+            var posN = navigation.GetPointPosition(pointN);
+            var posS = navigation.GetPointPosition(pointS);
+            var posW = navigation.GetPointPosition(pointW);
+            var posE = navigation.GetPointPosition(pointE);
+
+            var posNDiff = (posN - pos).Abs();
+            var posSDiff = (posS - pos).Abs();
+            var posWDiff = (posW - pos).Abs();
+            var posEDiff = (posE - pos).Abs();
+
+            return GetShortestVector(new Vector3[] { posNDiff, posSDiff, posWDiff, posWDiff }, new int[] { pointN, pointS, pointW, pointE });
+        }
+
+        private int GetShortestVector(Vector3[] vectors, int[] idx)
+        {
+            var shortestV = new Vector3(500, 500, 500);
+            int id = -1;
+
+            for (var i = 0; i < idx.Length; i++)
+            {
+                if (vectors[i].Length() <= shortestV.Length())
+                {
+                    shortestV = vectors[i];
+                    id = idx[i];
+                }
+            }
+            return id;
         }
 
         public override string get_job_name()
