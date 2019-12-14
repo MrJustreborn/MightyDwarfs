@@ -37,6 +37,23 @@ namespace Job
             }
         }
 
+        protected override void _DebugDraw(ImmediateGeometry ig) {
+            if (Owner != null) {
+                ig.Clear();
+                ig.Begin(Mesh.PrimitiveType.LineStrip);
+                ig.SetColor(new Color(1, 0, 0));
+                if (!ig.IsSetAsToplevel())
+                    ig.SetAsToplevel(true);
+                    ig.SetTranslation(new Vector3(0, 0, 0));
+                ig.AddVertex(Owner.Translation);
+
+                foreach (var p in way_points)
+                {
+                    ig.AddVertex(p);
+                }
+                ig.End();
+            }
+        }
         public override void process(float delta)
         {
             return;

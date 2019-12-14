@@ -92,6 +92,8 @@ namespace Job
                 && ((BuildTunnelJob)other).position == position;
         }
 
+        protected override void _DebugDraw(ImmediateGeometry ig) {}
+
         public override void process(float delta)
         {
             // mapMeshCtrl.update(position.x, position.y, 0, 0, 1);

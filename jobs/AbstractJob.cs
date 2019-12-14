@@ -77,6 +77,14 @@ namespace Job
             return Tr("");
         }
 
+        protected abstract void _DebugDraw(ImmediateGeometry ig);
+
+        public void draw(ImmediateGeometry ig) {
+            if (OS.IsDebugBuild()) {
+                _DebugDraw(ig);
+            }
+        }
+
         public abstract void process(float delta);
         public abstract void physics_process(float delta);
         public virtual bool finished()

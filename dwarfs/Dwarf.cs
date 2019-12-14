@@ -63,6 +63,7 @@ namespace entities
             if (jobs.Count > 0)
             {
                 jobs[0].process(delta);
+                jobs[0].draw(GetNode<ImmediateGeometry>("DebugDraw"));
                 label.Text += "\n" + jobs[0].title() + ": " + jobs[0].get_job_name() + " -> " + jobs[0].get_cell_pos();
                 label.Text += "\n" + jobs[0].finished();
                 if (jobs[0].finished())
