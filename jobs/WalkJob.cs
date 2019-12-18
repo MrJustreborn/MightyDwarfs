@@ -96,8 +96,8 @@ namespace Job
             var dist = (targetPos - target).Length();
             GD.Print("Dist: ", dist);
 
-            if (dist > 1.5)
-                return new List<Vector3>(0);
+            // if (dist < 1.5)
+            //     return new List<Vector3>(0);
 
             var fromPos = navigation.GetClosestPoint(Owner.Translation);
             Vector3[] path = navigation.GetPointPath(fromPos, toPos);

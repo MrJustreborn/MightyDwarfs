@@ -69,6 +69,9 @@ namespace entities
                 if (jobs[0].finished())
                 {
                     jobs.Remove(jobs[0]);
+                    if (jobs.Count > 0) {
+                        jobs[0].Owner = this; //reinit job, for navigation
+                    }
                 }
             }
             else if (time >= 100)

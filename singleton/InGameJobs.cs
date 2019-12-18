@@ -144,7 +144,7 @@ namespace singleton
             if (direction.Length() == 0) {
                 return new Job.BuildTunnelJob[] {startJob};
             } else {
-                var jobs = new List<Job.BuildTunnelJob>();
+                var jobs = new List<Job.AbstractJob>();
                 var nextPos = startPos + direction;
                 var nextJob = get_tunnel_job_on_cell(nextPos);
 
@@ -154,6 +154,7 @@ namespace singleton
                 int iteration = 0;
                 while(nextJob != null) {
                     nextJob.Owner = caller;
+                    jobs.Add(getWalkToJob(nextJob, caller));
                     jobs.Add(nextJob);
 
                     nextPos = nextPos + direction;
@@ -165,10 +166,15 @@ namespace singleton
                         break;
                     }
                 }
-
-
                 return jobs.ToArray();
             }
+        }
+
+        private Job.WalkJob getWalkToJob(Job.BuildTunnelJob job, entities.Dwarf caller) {
+            var walk = new Job.WalkJob(job.navigation, new Vector3(job.get_cell_pos().x * 2, job.get_cell_pos().y * 2, 0));
+            walk.Personal = true;
+            walk.Owner = caller;
+            return walk;
         }
 
         private Vector2 _GetTunnelDirection(Vector2 startPos) {

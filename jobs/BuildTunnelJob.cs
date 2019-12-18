@@ -108,7 +108,7 @@ namespace Job
             // var finished = !mapMeshCtrl.is_mineable(get_cell_pos().x, get_cell_pos().y);
             bool finished = !(bool)mapMeshCtrl.Call("is_mineable", get_cell_pos().x, get_cell_pos().y);
 
-            GD.Print("Finished?: ", finished);
+            // GD.Print("Finished?: ", finished);
             if (finished)
             {
                 // jobSystem.remove_finished_job(self);
