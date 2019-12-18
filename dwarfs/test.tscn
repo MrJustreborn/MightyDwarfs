@@ -48,3 +48,5 @@ margin_right = -920.0
 margin_bottom = -526.0
 text = "TEST"
 uppercase = true
+
+[node name="DebugDraw" type="ImmediateGeometry" parent="."]
