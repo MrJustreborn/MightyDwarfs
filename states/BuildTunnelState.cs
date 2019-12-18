@@ -27,13 +27,14 @@ namespace State
             }
 
             var pts = info.get_last_points();
+            // GD.Print("Check if equal: ", equals(last_pts, pts));
             if (!last_pts.Equals(pts))
             {
                 last_pts = pts;
 
                 if (!Input.IsMouseButtonPressed((int)ButtonList.Left) && pts != null && pts.Length > 0)
                 {
-                    GD.Print("New build tunnel jobs to add: ", pts);
+                    GD.Print("New build tunnel jobs to add: ", pts, " ", last_pts != pts);
                     List<Job.AbstractJob> jobs = new List<Job.AbstractJob>();
 
                     foreach (Vector2 p in pts)
@@ -53,6 +54,22 @@ namespace State
                 {
                     ctrl.Call("request_new_state", constant.StateNames.NONE);
                 }
+            }
+        }
+
+        private bool equals(Vector2[] arr1, Vector2[] arr2) {
+            // GD.Print("EQUAL: ", arr1.Length, " ? " ,arr2.Length);
+            if (arr1.Length != arr2.Length) {
+                return false;
+            } else {
+                for (int i = 0; i < arr1.Length; i++)
+                {
+                    // GD.Print("EQUAL: ", arr1[i], " ? " , arr2[i]);
+                    if (arr1[i] != arr2[i]) {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
     }

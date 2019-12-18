@@ -86,6 +86,7 @@ namespace singleton
 
         public Job.AbstractJob[] request_jobs(Vector2 pos, entities.Dwarf caller)
         {
+            GD.Print("Request jobs, ", pos, " -> ", caller);
             // Vector2 pos = new Vector2(x, y);
             // KinematicBody caller = null;
             Job.AbstractJob nearest = null;
@@ -111,11 +112,20 @@ namespace singleton
                     var walk = new Job.WalkJob(((Job.BuildTunnelJob)nearest).navigation, path[path.Length - 1]);
                     walk.Personal = true;
                     walk.Owner = caller;
-                    return new Job.AbstractJob[] { walk, nearest };
+
+                    var jobs = new List<Job.AbstractJob>();
+                    jobs.Add(walk);
+
+                    foreach (var item in _GetArrayOfConnectedTunnelJobs((Job.BuildTunnelJob)nearest, caller))
+                    {
+                        jobs.Add(item);
+                    }
+
+                    return jobs.ToArray(); //new Job.AbstractJob[] { walk, nearest };
                 }
                 else
                 {
-                    return new Job.AbstractJob[] { nearest };
+                    return _GetArrayOfConnectedTunnelJobs((Job.BuildTunnelJob)nearest, caller);//new Job.AbstractJob[] { nearest };
                 }
             }
             else
@@ -123,7 +133,55 @@ namespace singleton
                 // GD.Print(pos, " -> ", lastPos);
             }
             return new Job.AbstractJob[0];
+        }
 
+        private Job.AbstractJob[] _GetArrayOfConnectedTunnelJobs(Job.BuildTunnelJob startJob, entities.Dwarf caller) {
+            GD.Print("_GetArrayOfConnectedTunnelJobs ", startJob, " ", caller);
+            
+            var startPos = startJob.get_cell_pos();
+            var direction = _GetTunnelDirection(startPos);
+            GD.Print("Add jobs in direction: ", direction, " starting from: ", startPos);
+            if (direction.Length() == 0) {
+                return new Job.BuildTunnelJob[] {startJob};
+            } else {
+                var jobs = new List<Job.BuildTunnelJob>();
+                var nextPos = startPos + direction;
+                var nextJob = get_tunnel_job_on_cell(nextPos);
+
+                GD.Print("Add Jobs: ", nextPos, " -> ", nextJob);
+
+                jobs.Add(startJob);
+                int iteration = 0;
+                while(nextJob != null) {
+                    nextJob.Owner = caller;
+                    jobs.Add(nextJob);
+
+                    nextPos = nextPos + direction;
+                    nextJob = get_tunnel_job_on_cell(nextPos);
+                    GD.Print("(", iteration, ") Add Jobs: ", nextPos, " -> ", GD.Str(nextJob));
+                    iteration++;
+                    if (iteration > 10) {
+                        GD.PrintErr("Exceted iteration for tunnel jobs: ", iteration);
+                        break;
+                    }
+                }
+
+
+                return jobs.ToArray();
+            }
+        }
+
+        private Vector2 _GetTunnelDirection(Vector2 startPos) {
+            if (get_tunnel_job_on_cell(startPos + new Vector2(1, 0)) != null) {
+                return new Vector2(1, 0);
+            } else if (get_tunnel_job_on_cell(startPos + new Vector2(0, 1)) != null) {
+                return new Vector2(0, 1);
+            } else if (get_tunnel_job_on_cell(startPos + new Vector2(-1, 0)) != null) {
+                return new Vector2(-1, 0);
+            } else if (get_tunnel_job_on_cell(startPos + new Vector2(0, -1)) != null) {
+                return new Vector2(0, -1);
+            }
+            return new Vector2();
         }
     }
 }
