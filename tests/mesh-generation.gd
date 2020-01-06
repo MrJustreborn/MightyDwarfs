@@ -120,6 +120,26 @@ func _ready():
 	var timestamp2 = OS.get_system_time_msecs();
 	
 	print("FINISHED MAP: \t", timestamp2 - timestamp, " msecs");
+	TEST_CS_GRID();
+
+func TEST_CS_GRID():
+	print("TEST CS GRID")
+	var grid = load("res://grid/Grid.cs").new();
+
+	print("SetCell: ", Vector2(0,0), " -> ", [0, 1, 2, 0])
+	grid.SetCell(0,0, [0, 1, 2, 0]);
+	print("Return Cell: ", grid.GetCell(0, 0));
+
+	print(" ==== ")
+	for y in terrain.keys():
+		for x in terrain.keys():
+			print("Set: ", Vector2(x, y), " ", terrain[y][x])
+			grid.SetCell(x, y, terrain[y][x]);
+			print("Get: ", Vector2(x, y), " ", grid.GetCell(x, y));
+			#OS.delay_msec(25)
+
+
+	print("TESTED CS GRID")
 
 func _process(delta):
 	for chunk in check_chunks:
