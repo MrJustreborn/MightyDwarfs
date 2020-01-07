@@ -4,12 +4,12 @@ using Godot;
 namespace Grid
 {
     public class Grid : Reference {
-        private List<List<int[]>> pp = new List<List<int[]>>();
-        private List<List<int[]>> pn = new List<List<int[]>>();
-        private List<List<int[]>> nn = new List<List<int[]>>();
-        private List<List<int[]>> np = new List<List<int[]>>();
+        private List<List<Cell>> pp = new List<List<Cell>>();
+        private List<List<Cell>> pn = new List<List<Cell>>();
+        private List<List<Cell>> nn = new List<List<Cell>>();
+        private List<List<Cell>> np = new List<List<Cell>>();
 
-        public void SetCell(int x, int y, int[] what) {
+        public void SetCell(int x, int y, Cell what) {
             if (x >= 0 && y >= 0) {
                 GD.Print("SetCell: pp");
                 _SetCell(pp, x, y, what);
@@ -25,7 +25,7 @@ namespace Grid
             }
         }
 
-        public int[] GetCell(int x, int y) {
+        public Cell GetCell(int x, int y) {
             if (x >= 0 && y >= 0) {
                 return pp[x][y];
             } else if(x >= 0 && y < 0) {
@@ -40,20 +40,20 @@ namespace Grid
                 return np[x][y];
             }
 
-            return new int[4] {0, 0, 0, 0};
+            return new Cell();
         }
 
-        private void _SetCell(List<List<int[]>> which, int x, int y, int[] what) {
+        private void _SetCell(List<List<Cell>> which, int x, int y, Cell what) {
             x = Mathf.Abs(x);
             y = Mathf.Abs(y);
             
             GD.Print(GD.Str(which.Count), " : ", GD.Str(x), " - ", GD.Str(y));
             while (which.Count <= x) {
-                which.Add(new List<int[]>());
+                which.Add(new List<Cell>());
             }
 
             while (which[x].Count <= y) {
-                which[x].Add(new int[4]);
+                which[x].Add(new Cell());
             }
 
             GD.Print(GD.Str(which.Count), " - ", GD.Str(which[x].Count), " : ", GD.Str(x), " - ", GD.Str(y));
