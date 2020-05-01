@@ -4,10 +4,10 @@ using Godot;
 namespace Grid
 {
     public class Grid : Reference {
-        private List<List<Cell>> pp = new List<List<Cell>>();
-        private List<List<Cell>> pn = new List<List<Cell>>();
-        private List<List<Cell>> nn = new List<List<Cell>>();
-        private List<List<Cell>> np = new List<List<Cell>>();
+        private List<List<Cell>> pp = new List<List<Cell>>(); //upper-right
+        private List<List<Cell>> pn = new List<List<Cell>>(); //lower-right
+        private List<List<Cell>> nn = new List<List<Cell>>(); //lower-left
+        private List<List<Cell>> np = new List<List<Cell>>(); //upper-left
 
         public void SetCell(int x, int y, Cell what) {
             if (x >= 0 && y >= 0) {
@@ -40,7 +40,7 @@ namespace Grid
                 return np[x][y];
             }
 
-            return new Cell();
+            return null; //This does not exists so return null ... ?
         }
 
         private void _SetCell(List<List<Cell>> which, int x, int y, Cell what) {

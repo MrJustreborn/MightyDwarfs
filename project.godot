@@ -49,7 +49,6 @@ gdscript/completion/autocomplete_setters_and_getters=true
 
 window/size/width=1920
 window/size/height=1080
-window/size/borderless=true
 window/size/always_on_top=true
 
 [rendering]
