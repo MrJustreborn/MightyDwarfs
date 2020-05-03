@@ -19,12 +19,41 @@ namespace Grid
         public int damage {get; private set;} = 0;
 
 
-        public void takeDamge(int amt) {
-            damage += amt;
+        //Track if Cell has changed and must be regenerated in next frame
+        private Visible visibleInNextFrame = Visible.dark;
+        private int depthInNextFrame = 0;
+        private int damageInNextFrame = 0;
 
-            if (damage >= MAX_DAMAGE) {
-                depth += 1;
-                damage = 0;
+        //TODO: track state for current and next frame
+        public void SetToFogIfVisibleInNextFrame() {
+            if (visible == Visible.visible) {
+                visibleInNextFrame = Visible.fog;
+            }
+        }
+
+        public void SetToVisibleInNextFrame() {
+            visibleInNextFrame = Visible.visible;
+        }
+
+        public void TakeDamgeInNextFrame(int amt) {
+            damageInNextFrame += amt;
+
+            if (damageInNextFrame >= MAX_DAMAGE) {
+                depthInNextFrame += 1;
+                damageInNextFrame = 0;
+            }
+        }
+
+        public bool UpdateInNextFrame(bool reset = true) {
+            if (visible != visibleInNextFrame || depth != depthInNextFrame || damage != damageInNextFrame) {
+                if (reset) {
+                    visible = visibleInNextFrame;
+                    depth = depthInNextFrame;
+                    damage = damageInNextFrame;
+                }
+                return true;
+            } else {
+                return false;
             }
         }
     }
