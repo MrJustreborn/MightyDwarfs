@@ -99,23 +99,60 @@ namespace Grid
 
         //TODO: return chunks for regeneration each frame
         public List<List<Cell>> getChangedChunks() {
-            for (int x = 0; x < pp.Count; x++) {
-                for (int y = 0; y < pp[x].Count; y++) {
-                    if(pp[x][y] != null && pp[x][y].UpdateInNextFrame(false)) {
-                        List<Cell> chunk = getAllCellsInChunk(pp[x][y]);
+            List<(int, int)> ppChunks = getChangedChunksFor(pp);
+            List<(int, int)> pnChunks = getChangedChunksFor(pn);
+            List<(int, int)> nnChunks = getChangedChunksFor(nn);
+            List<(int, int)> npChunks = getChangedChunksFor(np);
+
+            List<List<Cell>> cells;
+            cells.Add(getAllCellsInChunk(ppChunks, pp));
+            cells.Add(getAllCellsInChunk(pnChunks, pn));
+            cells.Add(getAllCellsInChunk(nnChunks, nn));
+            cells.Add(getAllCellsInChunk(npChunks, np));
+
+            return cells;
+        }
+
+        private List<(int, int)> getChangedChunksFor(List<List<Cell>> which) {
+            List<(int, int)> chunks;
+
+            for (int x = 0; x < which.Count; x++) {
+                for (int y = 0; y < which[x].Count; y++) {
+                    if(which[x][y] != null && which[x][y].UpdateInNextFrame(false)) {
+                        chunks.Add(getChunk(which[x][y]));
                     }
                 }
             }
-            return null;
+
+            return chunks;
         }
 
-        private List<Cell> getAllCellsInChunk(Cell which) {
-            return null;
+        private (int, int) getChunk(Cell which) {
+            var xCHUNK = Mathf.Floor(Mathf.Abs(which.x) / CHUNK_SIZE);
+            var yCHUNK = Mathf.Floor(Mathf.Abs(which.y) / CHUNK_SIZE);
+
+            return (xCHUNK, yCHUNK);
         }
 
-        private void _SetCell(List<List<Cell>> which, int x, int y, Cell what) {
-            x = Mathf.Abs(x);
-            y = Mathf.Abs(y);
+        private List<Cell> getAllCellsInChunk(int xChunk, int yChunk, List<List<Cell>> which) {
+            List<Cell> cells;
+            for (int y = 0; y < CHUNK_SIZE; y++) {
+                for (int x = 0; x < CHUNK_SIZE; x++) {
+                    var yWorld = y + yChunk * CHUNK_SIZE;
+                    var xWorld = x + xChunk * CHUNK_SIZE;
+
+                    if (which.Count >= xWorld && which[xWorld].Count >= yWorld) {
+                        cells.Add(which[xWorld][yWorld]);
+                    }
+                }
+            }
+
+            return cells;
+        }
+
+        private void _SetCell(List<List<Cell>> which, int xOrg, int yOrg, Cell what) {
+            x = Mathf.Abs(xOrg);
+            y = Mathf.Abs(yOrg);
             
             GD.Print(GD.Str(which.Count), " : ", GD.Str(x), " - ", GD.Str(y));
             while (which.Count <= x) {
@@ -123,7 +160,7 @@ namespace Grid
             }
 
             while (which[x].Count <= y) {
-                which[x].Add(new Cell(x, y, CHUNK_SIZE));
+                which[x].Add(new Cell(xOrg, yOrg, CHUNK_SIZE));
             }
 
             GD.Print(GD.Str(which.Count), " - ", GD.Str(which[x].Count), " : ", GD.Str(x), " - ", GD.Str(y));

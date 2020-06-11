@@ -13,9 +13,9 @@ namespace Grid
 
         private const int MAX_DAMAGE = 5;
 
-        private readonly int x;
-        private readonly int y;
-        private readonly int chunk_size;
+        public readonly int x;
+        public readonly int y;
+        public readonly int chunk_size;
 
         public Visible visible {get; private set;} = Visible.dark;
         public int depth {get; private set;} = 0;
