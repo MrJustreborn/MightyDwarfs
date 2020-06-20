@@ -22,17 +22,19 @@ namespace Grid
         private List<List<Cell>> np = new List<List<Cell>>(); //upper-left
 
         public void SetCell(int x, int y, Cell what) {
+            // GD.Print("Grid::setCell: ", GD.Str(x), GD.Str(y), GD.Str(what));
+
             if (x >= 0 && y >= 0) {
-                GD.Print("SetCell: pp");
+                // GD.Print("SetCell: pp");
                 _SetCell(pp, x, y, what);
             } else if(x >= 0 && y < 0) {
-                GD.Print("SetCell: pn");
+                // GD.Print("SetCell: pn");
                 _SetCell(pn, x, y, what);
             } else if (x < 0 && y < 0) {
-                GD.Print("SetCell: nn");
+                // GD.Print("SetCell: nn");
                 _SetCell(nn, x, y, what);
             } else if (x < 0 && y >= 0) {
-                GD.Print("SetCell: np");
+                // GD.Print("SetCell: np");
                 _SetCell(np, x, y, what);
             }
         }
@@ -107,28 +109,38 @@ namespace Grid
         }
 
         //TODO: return chunks for regeneration each frame
-        public List<List<Cell>> getChangedChunks() {
-            List<Chunk> ppChunks = getChangedChunksFor(pp);
-            List<Chunk> pnChunks = getChangedChunksFor(pn);
-            List<Chunk> nnChunks = getChangedChunksFor(nn);
-            List<Chunk> npChunks = getChangedChunksFor(np);
+        public List<List<Cell>> getChangedChunks(bool reset = false) {
+            List<Chunk> ppChunks = getChangedChunksFor(pp, reset);
+            List<Chunk> pnChunks = getChangedChunksFor(pn, reset);
+            List<Chunk> nnChunks = getChangedChunksFor(nn, reset);
+            List<Chunk> npChunks = getChangedChunksFor(np, reset);
 
             List<List<Cell>> cells = new List<List<Cell>>();
-            cells.Add(getAllCellsInChunk(ppChunks, pp));
-            cells.Add(getAllCellsInChunk(pnChunks, pn));
-            cells.Add(getAllCellsInChunk(nnChunks, nn));
-            cells.Add(getAllCellsInChunk(npChunks, np));
+            addAllCellsInChunk(ppChunks, pp, cells);
+            addAllCellsInChunk(pnChunks, pn, cells);
+            addAllCellsInChunk(nnChunks, nn, cells);
+            addAllCellsInChunk(npChunks, np, cells);
 
             return cells;
         }
 
-        private List<Chunk> getChangedChunksFor(List<List<Cell>> which) {
+        private List<Chunk> getChangedChunksFor(List<List<Cell>> which, bool reset) {
             List<Chunk> chunks = new List<Chunk>();
 
             for (int x = 0; x < which.Count; x++) {
                 for (int y = 0; y < which[x].Count; y++) {
-                    if(which[x][y] != null && which[x][y].UpdateInNextFrame(false)) {
-                        chunks.Add(getChunk(which[x][y]));
+                    if(which[x][y] != null && which[x][y].UpdateInNextFrame(reset)) {
+                        var chunk = getChunk(which[x][y]);
+                        
+                        // chunks.Add(getChunk(which[x][y]));
+
+                        bool alreadyInList = chunks.Exists((c) => {
+                            return c.x == chunk.x && c.y == chunk.y;
+                        });
+                        
+                        if (!alreadyInList) {
+                            chunks.Add(chunk);
+                        }
                     }
                 }
             }
@@ -143,10 +155,12 @@ namespace Grid
             return new Chunk(xCHUNK, yCHUNK);
         }
 
-        private List<Cell> getAllCellsInChunk(List<Chunk> chunks, List<List<Cell>> which) {
-            List<Cell> cells = new List<Cell>();
+        private void addAllCellsInChunk(List<Chunk> chunks, List<List<Cell>> which, List<List<Cell>> cells) {
+            // List<Cell> cells = new List<Cell>();
+            GD.Print("addCells for Chunks, got chunks: ", GD.Str(chunks.Count));
             foreach (Chunk chunk in chunks)
             {
+                cells.Add(new List<Cell>());
                 var xOff = chunk.x;
                 var yOff = chunk.y;
                 for (int y = 0; y < CHUNK_SIZE; y++) {
@@ -154,21 +168,21 @@ namespace Grid
                         var yWorld = y + yOff * CHUNK_SIZE;
                         var xWorld = x + xOff * CHUNK_SIZE;
 
-                        if (which.Count >= xWorld && which[xWorld].Count >= yWorld) {
-                            cells.Add(which[xWorld][yWorld]);
+                        if (which.Count <= xWorld && which[xWorld].Count <= yWorld) {
+                            cells[cells.Count - 1].Add(which[xWorld][yWorld]);
                         }
                     }
                 }
             }
 
-            return cells;
+            // return cells;
         }
 
         private void _SetCell(List<List<Cell>> which, int xOrg, int yOrg, Cell what) {
             var x = Mathf.Abs(xOrg);
             var y = Mathf.Abs(yOrg);
             
-            GD.Print(GD.Str(which.Count), " : ", GD.Str(x), " - ", GD.Str(y));
+            // GD.Print(GD.Str(which.Count), " : ", GD.Str(x), " / ", GD.Str(y));
             while (which.Count <= x) {
                 which.Add(new List<Cell>());
             }
@@ -177,9 +191,9 @@ namespace Grid
                 which[x].Add(new Cell(xOrg, yOrg, CHUNK_SIZE));
             }
 
-            GD.Print(GD.Str(which.Count), " - ", GD.Str(which[x].Count), " : ", GD.Str(x), " - ", GD.Str(y));
+            // GD.Print(GD.Str(which.Count), " | ", GD.Str(which[x].Count), " : ", GD.Str(x), " / ", GD.Str(y));
 
-            GD.Print(GD.Str(what));
+            // GD.Print(GD.Str(what) + "\n");
             which[x][y] = what;
         }
     }

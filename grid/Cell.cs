@@ -10,6 +10,7 @@ namespace Grid
     }
     
     public class Cell : Reference {
+        private bool isInit = false;
 
         private const int MAX_DAMAGE = 5;
 
@@ -61,6 +62,13 @@ namespace Grid
         }
 
         public bool UpdateInNextFrame(bool reset = true) {
+            if (!isInit) {
+                if (reset) {
+                    isInit = true;
+                }
+                return true;
+            }
+
             if (visible != visibleInNextFrame || depth != depthInNextFrame || damage != damageInNextFrame) {
                 if (reset) {
                     visible = visibleInNextFrame;
