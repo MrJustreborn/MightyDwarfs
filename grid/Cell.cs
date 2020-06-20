@@ -29,9 +29,9 @@ namespace Grid
         private int damageInNextFrame = 0;
 
         public Cell(int x, int y, int chunk_size) {
-            self.x = x;
-            self.y = y;
-            self.chunk_size = chunk_size;
+            this.x = x;
+            this.y = y;
+            this.chunk_size = chunk_size;
         }
 
         //TODO: track state for current and next frame
@@ -46,7 +46,7 @@ namespace Grid
         }
 
         public void SetToVisibleIfFogInNextFrame() {
-            if (visible = Visible.fog) {
+            if (visible == Visible.fog) {
                 visibleInNextFrame = Visible.visible;
             }
         }

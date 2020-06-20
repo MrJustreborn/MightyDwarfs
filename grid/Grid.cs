@@ -3,6 +3,15 @@ using Godot;
 
 namespace Grid
 {
+    public class Chunk {
+        public readonly int x;
+        public readonly int y;
+
+        public Chunk(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
     public class Grid : Node {
 
         private const int CHUNK_SIZE = 5;
@@ -99,12 +108,12 @@ namespace Grid
 
         //TODO: return chunks for regeneration each frame
         public List<List<Cell>> getChangedChunks() {
-            List<(int, int)> ppChunks = getChangedChunksFor(pp);
-            List<(int, int)> pnChunks = getChangedChunksFor(pn);
-            List<(int, int)> nnChunks = getChangedChunksFor(nn);
-            List<(int, int)> npChunks = getChangedChunksFor(np);
+            List<Chunk> ppChunks = getChangedChunksFor(pp);
+            List<Chunk> pnChunks = getChangedChunksFor(pn);
+            List<Chunk> nnChunks = getChangedChunksFor(nn);
+            List<Chunk> npChunks = getChangedChunksFor(np);
 
-            List<List<Cell>> cells;
+            List<List<Cell>> cells = new List<List<Cell>>();
             cells.Add(getAllCellsInChunk(ppChunks, pp));
             cells.Add(getAllCellsInChunk(pnChunks, pn));
             cells.Add(getAllCellsInChunk(nnChunks, nn));
@@ -113,8 +122,8 @@ namespace Grid
             return cells;
         }
 
-        private List<(int, int)> getChangedChunksFor(List<List<Cell>> which) {
-            List<(int, int)> chunks;
+        private List<Chunk> getChangedChunksFor(List<List<Cell>> which) {
+            List<Chunk> chunks = new List<Chunk>();
 
             for (int x = 0; x < which.Count; x++) {
                 for (int y = 0; y < which[x].Count; y++) {
@@ -127,22 +136,27 @@ namespace Grid
             return chunks;
         }
 
-        private (int, int) getChunk(Cell which) {
-            var xCHUNK = Mathf.Floor(Mathf.Abs(which.x) / CHUNK_SIZE);
-            var yCHUNK = Mathf.Floor(Mathf.Abs(which.y) / CHUNK_SIZE);
+        private Chunk getChunk(Cell which) {
+            int xCHUNK = (int) Mathf.Floor(Mathf.Abs(which.x) / CHUNK_SIZE);
+            int yCHUNK = (int) Mathf.Floor(Mathf.Abs(which.y) / CHUNK_SIZE);
 
-            return (xCHUNK, yCHUNK);
+            return new Chunk(xCHUNK, yCHUNK);
         }
 
-        private List<Cell> getAllCellsInChunk(int xChunk, int yChunk, List<List<Cell>> which) {
-            List<Cell> cells;
-            for (int y = 0; y < CHUNK_SIZE; y++) {
-                for (int x = 0; x < CHUNK_SIZE; x++) {
-                    var yWorld = y + yChunk * CHUNK_SIZE;
-                    var xWorld = x + xChunk * CHUNK_SIZE;
+        private List<Cell> getAllCellsInChunk(List<Chunk> chunks, List<List<Cell>> which) {
+            List<Cell> cells = new List<Cell>();
+            foreach (Chunk chunk in chunks)
+            {
+                var xOff = chunk.x;
+                var yOff = chunk.y;
+                for (int y = 0; y < CHUNK_SIZE; y++) {
+                    for (int x = 0; x < CHUNK_SIZE; x++) {
+                        var yWorld = y + yOff * CHUNK_SIZE;
+                        var xWorld = x + xOff * CHUNK_SIZE;
 
-                    if (which.Count >= xWorld && which[xWorld].Count >= yWorld) {
-                        cells.Add(which[xWorld][yWorld]);
+                        if (which.Count >= xWorld && which[xWorld].Count >= yWorld) {
+                            cells.Add(which[xWorld][yWorld]);
+                        }
                     }
                 }
             }
@@ -151,8 +165,8 @@ namespace Grid
         }
 
         private void _SetCell(List<List<Cell>> which, int xOrg, int yOrg, Cell what) {
-            x = Mathf.Abs(xOrg);
-            y = Mathf.Abs(yOrg);
+            var x = Mathf.Abs(xOrg);
+            var y = Mathf.Abs(yOrg);
             
             GD.Print(GD.Str(which.Count), " : ", GD.Str(x), " - ", GD.Str(y));
             while (which.Count <= x) {
