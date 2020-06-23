@@ -51,7 +51,24 @@ public class MeshGeneration : Spatial {
         GD.Print("Time needed: ", GD.Str(tStop - tStart), "msecs");
     }
 
-    private void genMesh(List<List<Grid.Cell>> cells) {
-        GD.Print("Gen Mesh, Chunks: ", GD.Str(cells.Count));
+
+    // Chunks[Cells]
+    private void genMesh(List<List<Grid.Chunk>> chunks) {
+        GD.Print("Gen Mesh, Chunklist: ", GD.Str(chunks.Count));
+
+        //each chunk
+        foreach (List<Grid.Chunk> chunked in chunks)
+        {
+            GD.Print("Gen Mesh, Chunks: ", GD.Str(chunked.Count));
+            foreach (Grid.Chunk chunk in chunked)
+            {
+                // GD.Print("Gen Mesh, cells: ", GD.Str(chunk.cells.Count));
+                //Each cell in this chunk
+                foreach (Grid.Cell item in chunk.cells)
+                {
+                    
+                }
+            }
+        }
     }
 }

@@ -7,9 +7,15 @@ namespace Grid
         public readonly int x;
         public readonly int y;
 
+        public List<Cell> cells {get; private set;} = new List<Cell>();
+
         public Chunk(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+
+        public void addCell(Cell c) {
+            this.cells.Add(c);
         }
     }
     public class Grid : Node {
@@ -109,19 +115,25 @@ namespace Grid
         }
 
         //TODO: return chunks for regeneration each frame
-        public List<List<Cell>> getChangedChunks(bool reset = false) {
+        public List<List<Chunk>> getChangedChunks(bool reset = false) {
             List<Chunk> ppChunks = getChangedChunksFor(pp, reset);
             List<Chunk> pnChunks = getChangedChunksFor(pn, reset);
             List<Chunk> nnChunks = getChangedChunksFor(nn, reset);
             List<Chunk> npChunks = getChangedChunksFor(np, reset);
 
-            List<List<Cell>> cells = new List<List<Cell>>();
-            addAllCellsInChunk(ppChunks, pp, cells);
-            addAllCellsInChunk(pnChunks, pn, cells);
-            addAllCellsInChunk(nnChunks, nn, cells);
-            addAllCellsInChunk(npChunks, np, cells);
+            addAllCellsInChunk(ppChunks, pp);
+            addAllCellsInChunk(pnChunks, pn);
+            addAllCellsInChunk(nnChunks, nn);
+            addAllCellsInChunk(npChunks, np);
 
-            return cells;
+            //TODO: flatmap
+            List<List<Chunk>> allChunks = new List<List<Chunk>>();
+            allChunks.Add(ppChunks);
+            allChunks.Add(pnChunks);
+            allChunks.Add(nnChunks);
+            allChunks.Add(npChunks);
+
+            return allChunks;
         }
 
         private List<Chunk> getChangedChunksFor(List<List<Cell>> which, bool reset) {
@@ -155,12 +167,12 @@ namespace Grid
             return new Chunk(xCHUNK, yCHUNK);
         }
 
-        private void addAllCellsInChunk(List<Chunk> chunks, List<List<Cell>> which, List<List<Cell>> cells) {
+        private void addAllCellsInChunk(List<Chunk> chunks, List<List<Cell>> which) {
             // List<Cell> cells = new List<Cell>();
             GD.Print("addCells for Chunks, got chunks: ", GD.Str(chunks.Count));
             foreach (Chunk chunk in chunks)
             {
-                cells.Add(new List<Cell>());
+                // cells.Add(new List<Cell>());
                 var xOff = chunk.x;
                 var yOff = chunk.y;
                 for (int y = 0; y < CHUNK_SIZE; y++) {
@@ -168,8 +180,10 @@ namespace Grid
                         var yWorld = y + yOff * CHUNK_SIZE;
                         var xWorld = x + xOff * CHUNK_SIZE;
 
-                        if (which.Count <= xWorld && which[xWorld].Count <= yWorld) {
-                            cells[cells.Count - 1].Add(which[xWorld][yWorld]);
+                        if (which.Count > xWorld && which[xWorld].Count > yWorld) {
+                            // cells[cells.Count - 1].Add(which[xWorld][yWorld]);
+                            // GD.Print("addCell ", GD.Str(which[xWorld][yWorld]));
+                            chunk.addCell(which[xWorld][yWorld]);
                         }
                     }
                 }
